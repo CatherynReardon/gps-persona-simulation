@@ -160,6 +160,24 @@ textarea {
   font-weight: 800;
 }
 
+.secondary-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  color: var(--ink);
+  background: #e6eee9;
+  border: 1px solid #c9d8d0;
+  border-radius: 7px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.secondary-link:hover {
+  filter: brightness(0.96);
+}
+
 .secondary-button:hover {
   filter: brightness(0.96);
 }
@@ -715,6 +733,63 @@ canvas {
   margin-top: 18px;
 }
 
+.wellbeing-hero {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.78fr) minmax(460px, 1.22fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.wellbeing-person-card,
+.wellbeing-scene {
+  padding: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 249, 0.98)),
+    var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.wellbeing-score-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.wellbeing-score-row div {
+  padding: 12px;
+  background: #f3f8f5;
+  border: 1px solid #dfebe5;
+  border-radius: 8px;
+}
+
+.wellbeing-score-row span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.wellbeing-score-row b {
+  display: block;
+  margin-top: 2px;
+  font-size: 1.35rem;
+}
+
+.wellbeing-scene {
+  min-height: 360px;
+}
+
+#wellCanvas {
+  display: block;
+  width: 100%;
+  min-height: 330px;
+  aspect-ratio: 2 / 1;
+}
+
 .consent-card {
   display: grid;
   gap: 10px;
@@ -999,6 +1074,7 @@ canvas {
 
   .workspace-top,
   .simulation-grid,
+  .wellbeing-hero,
   .comparison-rows,
   .global-grid,
   .classroom-grid,

@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Global Wellbeing Simulation</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell wellbeing-app">
+      <aside class="control-panel" aria-label="Wellbeing simulation controls">
+        <div class="brand-block">
+          <p class="eyebrow">Global Wellbeing Initiative</p>
+          <h1>Wellbeing Simulation</h1>
+          <p class="source-note">Explore group-level patterns in thriving, calm, purpose, support, health, work meaning, and life balance.</p>
+        </div>
+
+        <section class="panel-section">
+          <label for="wellCountry">Country</label>
+          <select id="wellCountry"></select>
+        </section>
+
+        <section class="panel-section">
+          <label for="wellDimension">Population lens</label>
+          <select id="wellDimension"></select>
+        </section>
+
+        <section class="panel-section">
+          <label for="wellGroup">Group</label>
+          <select id="wellGroup"></select>
+        </section>
+
+        <section class="panel-section">
+          <label for="wellScenario">Scenario</label>
+          <select id="wellScenario">
+            <option value="stress">Stress and coping</option>
+            <option value="support">Seeking support</option>
+            <option value="purpose">Purpose and meaning</option>
+            <option value="work">Work-life design</option>
+            <option value="intervention">Wellbeing intervention</option>
+          </select>
+        </section>
+
+        <section class="panel-section">
+          <button id="newWellProfile" class="primary-button" type="button">Refresh Profile</button>
+        </section>
+
+        <section class="panel-section">
+          <a class="secondary-link" href="index.html">Back to GPS Preferences</a>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <header class="workspace-top">
+          <div>
+            <p class="eyebrow">Live Profile</p>
+            <h2 id="wellProfileTitle">Loading wellbeing data...</h2>
+          </div>
+          <div class="metric-strip" aria-label="Dataset metrics">
+            <div>
+              <strong id="wellCountryCount">--</strong>
+              <span>countries</span>
+            </div>
+            <div>
+              <strong id="wellProfileCount">--</strong>
+              <span>profiles</span>
+            </div>
+            <div>
+              <strong id="wellGlobalCount">--</strong>
+              <span>global profiles</span>
+            </div>
+          </div>
+        </header>
+
+        <section class="wellbeing-hero">
+          <div class="wellbeing-person-card">
+            <div class="persona-head">
+              <div class="avatar hero-avatar" id="wellAvatar" aria-hidden="true"></div>
+              <div>
+                <h3 id="wellPersonaName">Wellbeing profile</h3>
+                <p id="wellPersonaSub">Group-level simulated profile</p>
+              </div>
+            </div>
+            <p id="wellNarrative" class="persona-narrative"></p>
+            <div class="wellbeing-score-row">
+              <div>
+                <span>Wellbeing</span>
+                <b id="wellScore">--</b>
+              </div>
+              <div>
+                <span>Strain</span>
+                <b id="strainScore">--</b>
+              </div>
+              <div>
+                <span>Purpose</span>
+                <b id="purposeScore">--</b>
+              </div>
+            </div>
+          </div>
+
+          <div class="wellbeing-scene">
+            <canvas id="wellCanvas" width="860" height="430" aria-label="Animated wellbeing setting"></canvas>
+          </div>
+        </section>
+
+        <div class="simulation-grid">
+          <section class="trait-panel">
+            <div class="section-head">
+              <h3>Wellbeing Indicators</h3>
+              <span class="muted">response rates</span>
+            </div>
+            <div id="wellBars" class="trait-bars"></div>
+          </section>
+
+          <section class="scenario-panel">
+            <div class="section-head">
+              <h3>Scenario Interpretation</h3>
+              <span id="wellScenarioTag" class="pill">stress</span>
+            </div>
+            <div id="wellScenarioText" class="scenario-text"></div>
+          </section>
+        </div>
+
+        <section class="comparison-section">
+          <div class="section-head">
+            <h3>Group Comparison</h3>
+            <span class="muted">same country, selected population lens</span>
+          </div>
+          <div id="wellComparison" class="comparison-rows"></div>
+        </section>
+
+        <section class="research-section">
+          <div class="section-head">
+            <div>
+              <h3>Research Questions</h3>
+              <p class="microcopy">Use this dataset to study wellbeing patterns, not individual personality traits.</p>
+            </div>
+          </div>
+          <div id="wellResearchPrompts" class="reflection-prompts"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="assets/wellbeing.js"></script>
+  </body>
+</html>
