@@ -25,6 +25,7 @@ const els = {
   coreFinding: document.querySelector("#coreFinding"),
   findingNarrative: document.querySelector("#findingNarrative"),
   gapBadges: document.querySelector("#gapBadges"),
+  legend: document.querySelector("#comparisonLegend"),
   chart: document.querySelector("#comparisonChart"),
   questionTag: document.querySelector("#questionTag"),
   researchBuilder: document.querySelector("#researchBuilder"),
@@ -166,11 +167,15 @@ function renderFinding() {
 function renderChart() {
   const keys = focusMap[els.question.value];
   const rows = gapRows(keys);
+  els.legend.innerHTML = `
+    <div class="legend-item"><span class="legend-swatch group-a"></span><b>Group A:</b> ${state.profileA.group}</div>
+    <div class="legend-item"><span class="legend-swatch group-b"></span><b>Group B:</b> ${state.profileB.group}</div>
+    <div class="legend-note">Each indicator row shows Group A on the top bar and Group B on the bottom bar.</div>
+  `;
   els.chart.innerHTML = rows
     .map((row) => {
       const aWidth = clamp((row.a ?? 0) * 100, 1, 100);
       const bWidth = clamp((row.b ?? 0) * 100, 1, 100);
-      const risk = row.polarity === "risk";
       return `
         <div class="compare-row">
           <div class="compare-label">
@@ -178,8 +183,8 @@ function renderChart() {
             <span>${Math.abs(Math.round(row.diff * 100))} pt gap</span>
           </div>
           <div class="compare-bars">
-            <div class="compare-bar a"><span style="width:${aWidth}%;background:${risk ? "var(--red)" : "var(--green)"}"></span><b>${pct(row.a)}</b></div>
-            <div class="compare-bar b"><span style="width:${bWidth}%;background:${risk ? "var(--gold)" : "var(--blue)"}"></span><b>${pct(row.b)}</b></div>
+            <div class="compare-bar a"><span style="width:${aWidth}%;background:var(--green)"></span><b>A: ${pct(row.a)}</b></div>
+            <div class="compare-bar b"><span style="width:${bWidth}%;background:var(--blue)"></span><b>B: ${pct(row.b)}</b></div>
           </div>
         </div>
       `;

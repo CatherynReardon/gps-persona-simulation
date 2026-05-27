@@ -856,6 +856,46 @@ canvas {
   gap: 12px;
 }
 
+.comparison-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  background: #f4f8f6;
+  border: 1px solid #dfebe5;
+  border-radius: 8px;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #273a33;
+  font-size: 0.88rem;
+}
+
+.legend-swatch {
+  width: 18px;
+  height: 10px;
+  border-radius: 99px;
+}
+
+.legend-swatch.group-a {
+  background: var(--green);
+}
+
+.legend-swatch.group-b {
+  background: var(--blue);
+}
+
+.legend-note {
+  flex-basis: 100%;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
 .compare-row {
   display: grid;
   grid-template-columns: minmax(170px, 0.35fr) 1fr;
@@ -886,7 +926,7 @@ canvas {
 
 .compare-bar {
   display: grid;
-  grid-template-columns: 1fr 54px;
+  grid-template-columns: 1fr 72px;
   gap: 8px;
   align-items: center;
 }
