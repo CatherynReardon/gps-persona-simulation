@@ -879,15 +879,17 @@ canvas {
 .legend-swatch {
   width: 18px;
   height: 10px;
+  display: inline-block;
+  flex: 0 0 18px;
   border-radius: 99px;
 }
 
 .legend-swatch.group-a {
-  background: var(--green);
+  background: var(--blue);
 }
 
 .legend-swatch.group-b {
-  background: var(--blue);
+  background: var(--green);
 }
 
 .legend-note {

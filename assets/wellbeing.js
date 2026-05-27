@@ -183,8 +183,8 @@ function renderChart() {
             <span>${Math.abs(Math.round(row.diff * 100))} pt gap</span>
           </div>
           <div class="compare-bars">
-            <div class="compare-bar a"><span style="width:${aWidth}%;background:var(--green)"></span><b>A: ${pct(row.a)}</b></div>
-            <div class="compare-bar b"><span style="width:${bWidth}%;background:var(--blue)"></span><b>B: ${pct(row.b)}</b></div>
+            <div class="compare-bar a"><span style="width:${aWidth}%;background:var(--blue)"></span><b>A: ${pct(row.a)}</b></div>
+            <div class="compare-bar b"><span style="width:${bWidth}%;background:var(--green)"></span><b>B: ${pct(row.b)}</b></div>
           </div>
         </div>
       `;
