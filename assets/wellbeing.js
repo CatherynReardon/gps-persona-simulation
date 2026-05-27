@@ -261,6 +261,7 @@ function resetScene() {
   const b = state.profileB;
   state.people = Array.from({ length: 12 }, (_, index) => {
     const profile = index % 2 === 0 ? a : b;
+    const context = avatarContext(profile, index);
     return {
       profile,
       side: index % 2 === 0 ? "a" : "b",
@@ -269,8 +270,104 @@ function resetScene() {
       tx: 80 + Math.random() * 600,
       ty: 210 + Math.random() * 100,
       speed: 0.4 + Math.random() * 0.55,
+      context,
+      bubbleTimer: 40 + index * 28,
     };
   });
+}
+
+function avatarContext(profile, index) {
+  const options = [
+    {
+      label: "Support",
+      value: profile.metrics.support,
+      text:
+        (profile.metrics.support ?? 0) >= 0.75
+          ? "I have someone to count on."
+          : "Support may be harder to find.",
+      color: "#14785d",
+    },
+    {
+      label: "Calm",
+      value: profile.metrics.calm,
+      text:
+        (profile.metrics.calm ?? 0) >= 0.7
+          ? "Yesterday felt calm."
+          : "Calm is less common here.",
+      color: "#315f9d",
+    },
+    {
+      label: "Strain",
+      value: profile.scores.strain,
+      text:
+        (profile.scores.strain ?? 0) >= 0.28
+          ? "Strain is part of this profile."
+          : "Reported strain is lower.",
+      color: "#ba4a42",
+    },
+    {
+      label: "Purpose",
+      value: profile.scores.purpose,
+      text: `Purpose leans toward ${topPurpose(profile)}.`,
+      color: "#b7791f",
+    },
+    {
+      label: "Work",
+      value: profile.metrics.enjoy_work,
+      text:
+        (profile.metrics.enjoy_work ?? 0) >= 0.75
+          ? "Daily work is often enjoyed."
+          : "Work meaning may vary.",
+      color: "#0f766e",
+    },
+  ];
+  return options[index % options.length];
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+}
+
+function drawBubble(ctx, person, x, y) {
+  const show = person.bubbleTimer % 260 < 118;
+  if (!show) return;
+  const text = person.context.text;
+  ctx.font = "bold 12px Inter, sans-serif";
+  const width = clamp(ctx.measureText(text).width + 24, 110, 235);
+  const bx = clamp(x - width / 2, 10, ctx.canvas.width - width - 10);
+  const by = clamp(y - 82, 12, ctx.canvas.height - 100);
+  ctx.fillStyle = "rgba(255,255,255,0.94)";
+  ctx.strokeStyle = person.context.color;
+  ctx.lineWidth = 2;
+  roundRect(ctx, bx, by, width, 34, 9);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#17211d";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, bx + width / 2, by + 17);
+}
+
+function drawLegend(ctx) {
+  ctx.fillStyle = "rgba(255,255,255,0.94)";
+  roundRect(ctx, 18, 18, 250, 72, 10);
+  ctx.fill();
+  ctx.fillStyle = "#17211d";
+  ctx.font = "bold 13px Inter, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("Scene key", 34, 39);
+  ctx.font = "12px Inter, sans-serif";
+  ctx.fillText("Blue = Group A, green = Group B", 34, 58);
+  ctx.fillText("Ring size/darkness reflects strain", 34, 76);
 }
 
 function drawScene() {
@@ -290,12 +387,15 @@ function drawScene() {
   ctx.fillRect(500, 92, 205, 114);
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(295, 180, 165, 42);
+  drawLegend(ctx);
   ctx.fillStyle = "#17211d";
   ctx.font = "bold 14px Inter, sans-serif";
-  ctx.fillText(state.profileA.group, 72, 112);
-  ctx.fillText(state.profileB.group, 520, 124);
+  ctx.textAlign = "left";
+  ctx.fillText(`Group A: ${state.profileA.group}`, 72, 112);
+  ctx.fillText(`Group B: ${state.profileB.group}`, 520, 124);
 
   state.people.forEach((person) => {
+    person.bubbleTimer += 1;
     const dx = person.tx - person.x;
     const dy = person.ty - person.y;
     const dist = Math.hypot(dx, dy);
@@ -314,15 +414,22 @@ function drawScene() {
       const profile = person.profile;
       const color = person.side === "a" ? "#315f9d" : "#14785d";
       const strain = profile.scores.strain ?? 0.2;
+      const wellbeing = profile.scores.wellbeing ?? 0.6;
       const bob = Math.sin(state.tick / 12 + index) * 2;
       const x = person.x;
       const y = person.y + bob;
+      ctx.fillStyle = `rgba(186,74,66,${clamp(strain, 0.1, 0.55)})`;
+      ctx.beginPath();
+      ctx.arc(x, y - 13, 24 + strain * 14, 0, Math.PI * 2);
+      ctx.fill();
       ctx.fillStyle = "rgba(23,33,29,0.14)";
       ctx.beginPath();
       ctx.ellipse(x, y + 42, 19, 6, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = color;
       ctx.fillRect(x - 14, y + 2, 28, 34);
+      ctx.fillStyle = `rgba(255,255,255,${clamp(wellbeing, 0.35, 0.9)})`;
+      ctx.fillRect(x - 9, y + 9, 18, 10);
       ctx.fillStyle = strain > 0.28 ? "#c9855c" : "#e0ad82";
       ctx.beginPath();
       ctx.arc(x, y - 13, 18, 0, Math.PI * 2);
@@ -336,6 +443,22 @@ function drawScene() {
       ctx.arc(x - 5, y - 13, 1.8, 0, Math.PI * 2);
       ctx.arc(x + 5, y - 13, 1.8, 0, Math.PI * 2);
       ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.strokeStyle = person.context.color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(x + 18, y + 8, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#17211d";
+      ctx.font = "bold 7px Inter, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(person.context.label.slice(0, 2).toUpperCase(), x + 18, y + 8);
+      ctx.fillStyle = "#17211d";
+      ctx.font = "bold 9px Inter, sans-serif";
+      ctx.fillText(person.side.toUpperCase(), x, y + 22);
+      drawBubble(ctx, person, x, y);
     });
   state.frame = requestAnimationFrame(drawScene);
 }
