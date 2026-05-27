@@ -3,16 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Global Wellbeing Simulation</title>
+    <title>Comparative Wellbeing Research Lab</title>
     <link rel="stylesheet" href="assets/styles.css" />
   </head>
   <body>
     <main class="app-shell wellbeing-app">
-      <aside class="control-panel" aria-label="Wellbeing simulation controls">
+      <aside class="control-panel" aria-label="Wellbeing research controls">
         <div class="brand-block">
           <p class="eyebrow">Global Wellbeing Initiative</p>
-          <h1>Wellbeing Simulation</h1>
-          <p class="source-note">Explore group-level patterns in thriving, calm, purpose, support, health, work meaning, and life balance.</p>
+          <h1>Comparative Wellbeing Lab</h1>
+          <p class="source-note">Compare demographic groups, identify wellbeing gaps, form hypotheses, and design evidence-based interventions.</p>
         </div>
 
         <section class="panel-section">
@@ -25,24 +25,30 @@
           <select id="wellDimension"></select>
         </section>
 
-        <section class="panel-section">
-          <label for="wellGroup">Group</label>
-          <select id="wellGroup"></select>
+        <section class="panel-section two-col">
+          <div>
+            <label for="wellGroupA">Group A</label>
+            <select id="wellGroupA"></select>
+          </div>
+          <div>
+            <label for="wellGroupB">Group B</label>
+            <select id="wellGroupB"></select>
+          </div>
         </section>
 
         <section class="panel-section">
-          <label for="wellScenario">Scenario</label>
-          <select id="wellScenario">
-            <option value="stress">Stress and coping</option>
-            <option value="support">Seeking support</option>
-            <option value="purpose">Purpose and meaning</option>
-            <option value="work">Work-life design</option>
-            <option value="intervention">Wellbeing intervention</option>
+          <label for="wellQuestion">Research focus</label>
+          <select id="wellQuestion">
+            <option value="strain">Who is experiencing more strain?</option>
+            <option value="support">Does support buffer wellbeing?</option>
+            <option value="purpose">How does purpose differ?</option>
+            <option value="work">Where does work feel meaningful?</option>
+            <option value="balance">Who reports more balance and peace?</option>
           </select>
         </section>
 
         <section class="panel-section">
-          <button id="newWellProfile" class="primary-button" type="button">Refresh Profile</button>
+          <button id="swapGroups" class="secondary-button" type="button">Swap Groups</button>
         </section>
 
         <section class="panel-section">
@@ -53,8 +59,8 @@
       <section class="workspace">
         <header class="workspace-top">
           <div>
-            <p class="eyebrow">Live Profile</p>
-            <h2 id="wellProfileTitle">Loading wellbeing data...</h2>
+            <p class="eyebrow">Research Lab</p>
+            <h2 id="labTitle">Loading wellbeing dataset...</h2>
           </div>
           <div class="metric-strip" aria-label="Dataset metrics">
             <div>
@@ -72,71 +78,59 @@
           </div>
         </header>
 
-        <section class="wellbeing-hero">
-          <div class="wellbeing-person-card">
-            <div class="persona-head">
-              <div class="avatar hero-avatar" id="wellAvatar" aria-hidden="true"></div>
-              <div>
-                <h3 id="wellPersonaName">Wellbeing profile</h3>
-                <p id="wellPersonaSub">Group-level simulated profile</p>
-              </div>
-            </div>
-            <p id="wellNarrative" class="persona-narrative"></p>
-            <div class="wellbeing-score-row">
-              <div>
-                <span>Wellbeing</span>
-                <b id="wellScore">--</b>
-              </div>
-              <div>
-                <span>Strain</span>
-                <b id="strainScore">--</b>
-              </div>
-              <div>
-                <span>Purpose</span>
-                <b id="purposeScore">--</b>
-              </div>
-            </div>
-          </div>
-
-          <div class="wellbeing-scene">
-            <canvas id="wellCanvas" width="860" height="430" aria-label="Animated wellbeing setting"></canvas>
-          </div>
+        <section class="lab-hero">
+          <article class="lab-card group-card" id="groupCardA"></article>
+          <article class="lab-card contrast-card">
+            <span class="card-label">Core Finding</span>
+            <h3 id="coreFinding">Select two groups to compare</h3>
+            <p id="findingNarrative"></p>
+            <div id="gapBadges" class="gap-badges"></div>
+          </article>
+          <article class="lab-card group-card" id="groupCardB"></article>
         </section>
 
-        <div class="simulation-grid">
-          <section class="trait-panel">
+        <section class="lab-card chart-card">
+          <div class="section-head">
+            <h3>Indicator Comparison</h3>
+            <span class="muted">response rates, Group A vs Group B</span>
+          </div>
+          <div id="comparisonChart" class="comparison-chart"></div>
+        </section>
+
+        <div class="lab-grid">
+          <section class="lab-card">
             <div class="section-head">
-              <h3>Wellbeing Indicators</h3>
-              <span class="muted">response rates</span>
+              <h3>Research Question Builder</h3>
+              <span id="questionTag" class="pill">strain</span>
             </div>
-            <div id="wellBars" class="trait-bars"></div>
+            <div id="researchBuilder" class="scenario-text"></div>
           </section>
 
-          <section class="scenario-panel">
+          <section class="lab-card">
             <div class="section-head">
-              <h3>Scenario Interpretation</h3>
-              <span id="wellScenarioTag" class="pill">stress</span>
+              <h3>Intervention Ideas</h3>
+              <span class="muted">based on largest gaps</span>
             </div>
-            <div id="wellScenarioText" class="scenario-text"></div>
+            <div id="interventionIdeas" class="scenario-text"></div>
           </section>
         </div>
 
-        <section class="comparison-section">
-          <div class="section-head">
-            <h3>Group Comparison</h3>
-            <span class="muted">same country, selected population lens</span>
-          </div>
-          <div id="wellComparison" class="comparison-rows"></div>
-        </section>
-
-        <section class="research-section">
-          <div class="section-head">
-            <div>
-              <h3>Research Questions</h3>
-              <p class="microcopy">Use this dataset to study wellbeing patterns, not individual personality traits.</p>
+        <section class="lab-grid lower">
+          <article class="lab-card mini-report">
+            <div class="section-head">
+              <h3>Mini Research Report</h3>
+              <button id="copyReport" class="mini-button" type="button">Copy Text</button>
             </div>
-          </div>
-          <div id="wellResearchPrompts" class="reflection-prompts"></div>
+            <textarea id="miniReportText" rows="10"></textarea>
+          </article>
+
+          <article class="lab-card scene-card">
+            <div class="section-head">
+              <h3>Population Context Scene</h3>
+              <span class="muted">visual support, not evidence</span>
+            </div>
+            <canvas id="wellCanvas" width="760" height="360" aria-label="Animated population wellbeing scene"></canvas>
+          </article>
         </section>
       </section>
     </main>

@@ -740,6 +740,181 @@ canvas {
   margin-bottom: 18px;
 }
 
+.lab-hero {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.9fr) minmax(300px, 1.1fr) minmax(240px, 0.9fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.lab-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.lab-grid.lower {
+  grid-template-columns: minmax(360px, 0.9fr) minmax(380px, 1.1fr);
+}
+
+.lab-card {
+  padding: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 249, 0.98)),
+    var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.group-card-top {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.group-card h3,
+.contrast-card h3 {
+  margin: 0;
+  font-size: 1.12rem;
+}
+
+.group-card p,
+.contrast-card p {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.well-mini-avatar {
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: linear-gradient(135deg, var(--blue), var(--green));
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: var(--soft-shadow);
+  font-weight: 900;
+}
+
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.score-grid div {
+  padding: 10px;
+  background: #f4f8f6;
+  border: 1px solid #dfebe5;
+  border-radius: 8px;
+}
+
+.score-grid span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.score-grid b {
+  display: block;
+  margin-top: 2px;
+  font-size: 1.2rem;
+}
+
+.group-summary {
+  margin-bottom: 0;
+}
+
+.gap-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.gap-badge {
+  display: inline-flex;
+  padding: 6px 9px;
+  color: #173a31;
+  background: #e5f2ec;
+  border: 1px solid #cde3d8;
+  border-radius: 99px;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.chart-card {
+  box-shadow: none;
+}
+
+.comparison-chart {
+  display: grid;
+  gap: 12px;
+}
+
+.compare-row {
+  display: grid;
+  grid-template-columns: minmax(170px, 0.35fr) 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 11px 0;
+  border-top: 1px solid #edf2ef;
+}
+
+.compare-row:first-child {
+  border-top: 0;
+}
+
+.compare-label b,
+.compare-label span {
+  display: block;
+}
+
+.compare-label span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.compare-bars {
+  display: grid;
+  gap: 7px;
+}
+
+.compare-bar {
+  display: grid;
+  grid-template-columns: 1fr 54px;
+  gap: 8px;
+  align-items: center;
+}
+
+.compare-bar span {
+  height: 12px;
+  background: #dbe5df;
+  border-radius: 99px;
+}
+
+.compare-bar b {
+  text-align: right;
+  color: #3b4b45;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.mini-report textarea {
+  min-height: 320px;
+  line-height: 1.45;
+}
+
+.scene-card canvas {
+  width: 100%;
+  min-height: 320px;
+  aspect-ratio: 19 / 9;
+}
+
 .wellbeing-person-card,
 .wellbeing-scene {
   padding: 20px;
@@ -1075,6 +1250,9 @@ canvas {
   .workspace-top,
   .simulation-grid,
   .wellbeing-hero,
+  .lab-hero,
+  .lab-grid,
+  .lab-grid.lower,
   .comparison-rows,
   .global-grid,
   .classroom-grid,
@@ -1102,7 +1280,8 @@ canvas {
   .trait-bar,
   .reason-row,
   .team-cards,
-  .response-grid {
+  .response-grid,
+  .compare-row {
     grid-template-columns: 1fr;
   }
 
