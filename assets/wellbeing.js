@@ -126,10 +126,13 @@ function topPurpose(profile) {
 }
 
 function renderGroupCard(target, profile, label) {
+  const groupClass = label === "Group A" ? "group-a-card" : "group-b-card";
+  target.classList.toggle("group-a-shell", label === "Group A");
+  target.classList.toggle("group-b-shell", label === "Group B");
   target.innerHTML = `
-    <span class="card-label">${label}</span>
+    <span class="card-label ${groupClass}">${label}</span>
     <div class="group-card-top">
-      <div class="well-mini-avatar">${profile.group.slice(0, 2).toUpperCase()}</div>
+      <div class="well-mini-avatar ${groupClass}">${profile.group.slice(0, 2).toUpperCase()}</div>
       <div>
         <h3>${profile.group}</h3>
         <p>${profile.dimension} in ${profile.country}</p>
@@ -159,7 +162,9 @@ function renderFinding() {
     .slice(0, 4)
     .map((gap) => {
       const leader = gap.diff >= 0 ? a.group : b.group;
-      return `<span class="gap-badge">${gap.label}: ${leader} +${Math.abs(Math.round(gap.diff * 100))} pts</span>`;
+      const leaderClass = gap.diff >= 0 ? "group-a-gap" : "group-b-gap";
+      const leaderLetter = gap.diff >= 0 ? "A" : "B";
+      return `<span class="gap-badge ${leaderClass}">${gap.label}: Group ${leaderLetter} (${leader}) +${Math.abs(Math.round(gap.diff * 100))} pts</span>`;
     })
     .join("");
 }
@@ -170,7 +175,7 @@ function renderChart() {
   els.legend.innerHTML = `
     <div class="legend-item"><span class="legend-swatch group-a"></span><b>Group A:</b> ${state.profileA.group}</div>
     <div class="legend-item"><span class="legend-swatch group-b"></span><b>Group B:</b> ${state.profileB.group}</div>
-    <div class="legend-note">Each indicator row shows Group A on the top bar and Group B on the bottom bar.</div>
+    <div class="legend-note">Color key: Group A is always blue and appears on the top bar. Group B is always green and appears on the bottom bar.</div>
   `;
   els.chart.innerHTML = rows
     .map((row) => {

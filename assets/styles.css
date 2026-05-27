@@ -786,17 +786,45 @@ canvas {
   line-height: 1.45;
 }
 
+.group-a-card {
+  color: var(--blue);
+}
+
+.group-b-card {
+  color: var(--green);
+}
+
+.group-card .card-label.group-a-card {
+  color: var(--blue);
+}
+
+.group-card .card-label.group-b-card {
+  color: var(--green);
+}
+
 .well-mini-avatar {
   width: 54px;
   height: 54px;
   display: grid;
   place-items: center;
   color: #fff;
-  background: linear-gradient(135deg, var(--blue), var(--green));
+  background: var(--blue);
   border-radius: 50%;
   border: 3px solid #fff;
   box-shadow: var(--soft-shadow);
   font-weight: 900;
+}
+
+.well-mini-avatar.group-b-card {
+  background: var(--green);
+}
+
+.group-card.group-a-shell {
+  border-top: 5px solid var(--blue);
+}
+
+.group-card.group-b-shell {
+  border-top: 5px solid var(--green);
 }
 
 .score-grid {
@@ -847,6 +875,18 @@ canvas {
   font-weight: 800;
 }
 
+.gap-badge.group-a-gap {
+  color: #17345f;
+  background: #e9f0fb;
+  border-color: #c8d8f0;
+}
+
+.gap-badge.group-b-gap {
+  color: #123f33;
+  background: #e5f2ec;
+  border-color: #cde3d8;
+}
+
 .chart-card {
   box-shadow: none;
 }
@@ -866,6 +906,8 @@ canvas {
   background: #f4f8f6;
   border: 1px solid #dfebe5;
   border-radius: 8px;
+  border-left: 5px solid var(--blue);
+  border-right: 5px solid var(--green);
 }
 
 .legend-item {
