@@ -394,17 +394,14 @@ Ethical note: Avoid ranking groups as better or worse. Use the data to ask caref
 }
 
 function renderVisualKey() {
-  const top = gapRows(focusMap[els.question.value])[0];
   els.visualKey.innerHTML = `
-    <h4>How to Read the Persona Rings</h4>
+    <h4>How to Read the Persona Scene</h4>
     <table>
       <thead><tr><th>Visual cue</th><th>What it means</th><th>Data source</th></tr></thead>
       <tbody>
-        <tr><td>Large outside ring around the person</td><td>This ring is always red. Larger or darker red means higher estimated strain.</td><td>Composite strain score</td></tr>
-        <tr><td>Small ring around the side badge</td><td>This smaller colored ring does not show strain. It shows the current discussion cue: support, calm, strain, purpose, or work.</td><td>Selected profile indicator</td></tr>
         <tr><td>Blue / green body</td><td>Blue is Group A; green is Group B.</td><td>Selected comparison groups</td></tr>
-        <tr><td>White chest marker</td><td>Brighter marker means stronger wellbeing score.</td><td>Composite wellbeing score</td></tr>
-        <tr><td>Center gap label</td><td>Shows the current largest focused gap: ${top.label}, ${pct(top.a)} vs ${pct(top.b)}.</td><td>Research focus selection</td></tr>
+        <tr><td>Red speech-bubble outline</td><td>This marks the persona whose group has higher estimated strain in the current comparison.</td><td>Composite strain score</td></tr>
+        <tr><td>Conversation text</td><td>The dialogue rotates through the selected data, including the current gap, support, calm, and strain.</td><td>Selected research focus and profile indicators</td></tr>
       </tbody>
     </table>
   `;
@@ -536,10 +533,18 @@ function drawBubble(ctx, person, x, y) {
   const top = gapRows(focusMap[els.question.value])[0];
   const value = person.side === "a" ? top.a : top.b;
   const other = person.side === "a" ? state.profileB.group : state.profileA.group;
-  const text =
-    person.side === "a"
-      ? `My group reports ${pct(value)} for ${top.label.toLowerCase()}. How does that compare with ${other}?`
-      : `My group is ${pct(value)}. The gap helps us ask what context might matter.`;
+  const profile = person.profile;
+  const otherProfile = person.side === "a" ? state.profileB : state.profileA;
+  const higherStrain = (profile.scores.strain ?? 0) > (otherProfile.scores.strain ?? 0);
+  const turn = Math.floor(person.bubbleTimer / 150) % 3;
+  const linesByTurn = [
+    `My group reports ${pct(value)} for ${top.label.toLowerCase()}. How does that compare with ${other}?`,
+    `${pct(profile.metrics.support)} of my group can count on help, and ${pct(profile.metrics.calm)} felt calm yesterday.`,
+    higherStrain
+      ? `My group shows more estimated strain, so I would ask what support might reduce it.`
+      : `My group shows lower estimated strain, so I would ask what strengths may be helping.`,
+  ];
+  const text = linesByTurn[turn];
   ctx.font = "bold 12px Inter, sans-serif";
   const width = 220;
   const lines = wrapCanvasText(ctx, text, width - 24).slice(0, 3);
@@ -547,8 +552,8 @@ function drawBubble(ctx, person, x, y) {
   const bx = clamp(x - width / 2, 10, ctx.canvas.width - width - 10);
   const by = clamp(y - 116, 12, ctx.canvas.height - height - 10);
   ctx.fillStyle = "rgba(255,255,255,0.94)";
-  ctx.strokeStyle = person.context.color;
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = higherStrain ? "#ba4a42" : person.side === "a" ? "#315f9d" : "#14785d";
+  ctx.lineWidth = higherStrain ? 4 : 2;
   roundRect(ctx, bx, by, width, height, 9);
   ctx.fill();
   ctx.stroke();
@@ -560,7 +565,7 @@ function drawBubble(ctx, person, x, y) {
 
 function drawLegend(ctx) {
   ctx.fillStyle = "rgba(255,255,255,0.94)";
-  roundRect(ctx, 18, 18, 276, 92, 10);
+  roundRect(ctx, 18, 18, 278, 74, 10);
   ctx.fill();
   ctx.fillStyle = "#17211d";
   ctx.font = "bold 13px Inter, sans-serif";
@@ -568,8 +573,7 @@ function drawLegend(ctx) {
   ctx.fillText("Scene key", 34, 39);
   ctx.font = "12px Inter, sans-serif";
   ctx.fillText("One representative persona per group", 34, 58);
-  ctx.fillText("Large red outside ring = strain", 34, 76);
-  ctx.fillText("Small badge ring = discussion cue", 34, 94);
+  ctx.fillText("Red comment outline = higher strain", 34, 76);
 }
 
 function drawScene() {
@@ -587,9 +591,6 @@ function drawScene() {
   ctx.fillRect(52, 80, 210, 126);
   ctx.fillStyle = "rgba(20,120,93,0.12)";
   ctx.fillRect(500, 92, 205, 114);
-  ctx.fillStyle = "rgba(255,255,255,0.9)";
-  roundRect(ctx, 300, 214, 160, 38, 10);
-  ctx.fill();
   drawLegend(ctx);
   ctx.fillStyle = "#17211d";
   ctx.font = "bold 14px Inter, sans-serif";
@@ -598,14 +599,6 @@ function drawScene() {
   const personaB = personaFor(state.profileB, "B");
   ctx.fillText(`Group A: ${personaA.name} (${state.profileA.group})`, 72, 112);
   ctx.fillText(`Group B: ${personaB.name} (${state.profileB.group})`, 520, 124);
-  ctx.font = "bold 12px Inter, sans-serif";
-  ctx.fillStyle = "#50615a";
-  ctx.textAlign = "center";
-  const top = gapRows(focusMap[els.question.value])[0];
-  ctx.fillText(`${top.label}`, 380, 230);
-  ctx.font = "12px Inter, sans-serif";
-  ctx.fillText(`${pct(top.a)} vs ${pct(top.b)}`, 380, 245);
-
   state.people.forEach((person) => {
     person.bubbleTimer += 1;
     person.x = person.tx + Math.sin(state.tick / 42 + (person.side === "a" ? 0 : Math.PI)) * 10;
@@ -618,23 +611,15 @@ function drawScene() {
       const profile = person.profile;
       const color = person.side === "a" ? "#315f9d" : "#14785d";
       const strain = profile.scores.strain ?? 0.2;
-      const wellbeing = profile.scores.wellbeing ?? 0.6;
       const bob = Math.sin(state.tick / 12 + index) * 2;
       const x = person.x;
       const y = person.y + bob;
-      ctx.fillStyle = `rgba(186,74,66,${clamp(strain, 0.1, 0.55)})`;
-      ctx.beginPath();
-      ctx.arc(x, y - 22, 36 + strain * 18, 0, Math.PI * 2);
-      ctx.fill();
       ctx.fillStyle = "rgba(23,33,29,0.14)";
       ctx.beginPath();
       ctx.ellipse(x, y + 64, 32, 9, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = color;
       roundRect(ctx, x - 24, y + 8, 48, 56, 10);
-      ctx.fill();
-      ctx.fillStyle = `rgba(255,255,255,${clamp(wellbeing, 0.35, 0.9)})`;
-      roundRect(ctx, x - 15, y + 20, 30, 14, 5);
       ctx.fill();
       ctx.fillStyle = strain > 0.28 ? "#c9855c" : "#e0ad82";
       ctx.beginPath();
@@ -649,18 +634,6 @@ function drawScene() {
       ctx.arc(x - 8, y - 22, 2.5, 0, Math.PI * 2);
       ctx.arc(x + 8, y - 22, 2.5, 0, Math.PI * 2);
       ctx.fill();
-      ctx.fillStyle = "#ffffff";
-      ctx.strokeStyle = person.context.color;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(x + 30, y + 20, 15, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-      ctx.fillStyle = "#17211d";
-      ctx.font = "bold 8px Inter, sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(person.context.label.slice(0, 2).toUpperCase(), x + 30, y + 20);
       ctx.fillStyle = "#17211d";
       ctx.font = "bold 11px Inter, sans-serif";
       ctx.fillText(person.persona.initials, x, y + 45);

@@ -4,6 +4,8 @@ const state = {
   data: null,
   profileA: null,
   profileB: null,
+  tick: 0,
+  frame: null,
 };
 
 const els = {
@@ -331,17 +333,14 @@ Ethical note: Avoid ranking countries or cultures. Use the comparison to generat
 }
 
 function renderVisualKey() {
-  const top = gapRows(focusMap[els.focus.value])[0];
   els.visualKey.innerHTML = `
-    <h4>How to Read the Persona Rings</h4>
+    <h4>How to Read the Persona Scene</h4>
     <table>
       <thead><tr><th>Visual cue</th><th>What it means</th><th>Data source</th></tr></thead>
       <tbody>
-        <tr><td>Large outside ring around the person</td><td>This ring is always red. Larger or darker red means higher estimated strain.</td><td>Composite strain score</td></tr>
-        <tr><td>Small ring around the A/B badge</td><td>This smaller colored ring does not show strain. It identifies whether the persona represents Country A or Country B.</td><td>Country comparison setting</td></tr>
         <tr><td>Blue / green body</td><td>Blue is Country A; green is Country B.</td><td>Selected countries</td></tr>
-        <tr><td>White chest marker</td><td>Brighter marker means stronger wellbeing score.</td><td>Composite wellbeing score</td></tr>
-        <tr><td>Center gap label</td><td>Shows the current largest focused gap: ${top.label}, ${pct(top.a)} vs ${pct(top.b)}.</td><td>Research focus selection</td></tr>
+        <tr><td>Red speech-bubble outline</td><td>This marks the persona whose country profile has higher estimated strain in the current comparison.</td><td>Composite strain score</td></tr>
+        <tr><td>Conversation text</td><td>The dialogue rotates through the selected data, including the current gap, support, calm, and strain.</td><td>Selected research focus and profile indicators</td></tr>
       </tbody>
     </table>
   `;
@@ -381,20 +380,12 @@ function drawScenePersona(ctx, profile, persona, x, y, isA) {
   const color = isA ? "#315f9d" : "#14785d";
   const accent = isA ? "#e9f0fb" : "#e5f2ec";
   const strain = profile.scores.strain ?? 0.2;
-  const wellbeing = profile.scores.wellbeing ?? 0.6;
-  ctx.fillStyle = `rgba(186,74,66,${clamp(strain, 0.12, 0.55)})`;
-  ctx.beginPath();
-  ctx.arc(x, y - 22, 38 + strain * 18, 0, Math.PI * 2);
-  ctx.fill();
   ctx.fillStyle = "rgba(23,33,29,0.14)";
   ctx.beginPath();
   ctx.ellipse(x, y + 68, 34, 10, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = color;
   roundRect(ctx, x - 25, y + 8, 50, 58, 10);
-  ctx.fill();
-  ctx.fillStyle = `rgba(255,255,255,${clamp(wellbeing, 0.36, 0.9)})`;
-  roundRect(ctx, x - 16, y + 21, 32, 15, 5);
   ctx.fill();
   ctx.fillStyle = persona.seed % 3 === 0 ? "#c9855c" : persona.seed % 3 === 1 ? "#e0ad82" : "#a76f4d";
   ctx.beginPath();
@@ -414,18 +405,6 @@ function drawScenePersona(ctx, profile, persona, x, y, isA) {
   ctx.beginPath();
   ctx.arc(x, y - 11, 8, 0.1 * Math.PI, 0.9 * Math.PI);
   ctx.stroke();
-  ctx.fillStyle = "#fff";
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(x + 31, y + 20, 16, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.stroke();
-  ctx.fillStyle = "#17211d";
-  ctx.font = "bold 8px Inter, sans-serif";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(isA ? "A" : "B", x + 31, y + 20);
   ctx.fillStyle = "#17211d";
   ctx.font = "bold 11px Inter, sans-serif";
   ctx.fillText(persona.initials, x, y + 46);
@@ -441,42 +420,13 @@ function drawScenePersona(ctx, profile, persona, x, y, isA) {
   ctx.fillText(profile.group, x, y + 120);
 }
 
-function drawSceneBubble(ctx, text, x, y, width, borderColor) {
-  ctx.fillStyle = "rgba(255,255,255,0.95)";
-  ctx.strokeStyle = borderColor;
-  ctx.lineWidth = 2;
-  roundRect(ctx, x, y, width, 58, 10);
-  ctx.fill();
-  ctx.stroke();
-  ctx.fillStyle = "#17211d";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.font = "bold 12px Inter, sans-serif";
-  const words = text.split(" ");
-  const lines = [];
-  let line = "";
-  words.forEach((word) => {
-    const test = `${line} ${word}`.trim();
-    if (ctx.measureText(test).width > width - 24 && line) {
-      lines.push(line);
-      line = word;
-    } else {
-      line = test;
-    }
-  });
-  if (line) lines.push(line);
-  lines.slice(0, 3).forEach((item, index) => {
-    ctx.fillText(item, x + width / 2, y + 18 + index * 14);
-  });
-}
-
-function drawSpeechBubble(ctx, text, x, y, width, borderColor) {
+function drawSpeechBubble(ctx, text, x, y, width, borderColor, highStrain = false) {
   ctx.font = "bold 11px Inter, sans-serif";
   const lines = wrapCanvasText(ctx, text, width - 24).slice(0, 4);
   const height = 22 + lines.length * 14;
   ctx.fillStyle = "rgba(255,255,255,0.96)";
-  ctx.strokeStyle = borderColor;
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = highStrain ? "#ba4a42" : borderColor;
+  ctx.lineWidth = highStrain ? 4 : 2;
   roundRect(ctx, x, y, width, height, 10);
   ctx.fill();
   ctx.stroke();
@@ -490,6 +440,7 @@ function drawSpeechBubble(ctx, text, x, y, width, borderColor) {
 
 function renderCountryScene() {
   if (!els.canvas) return;
+  state.tick += 1;
   const ctx = els.canvas.getContext("2d");
   const canvas = els.canvas;
   const aPersona = personaFor(state.profileA, "A");
@@ -507,7 +458,7 @@ function renderCountryScene() {
   ctx.fillStyle = "rgba(20,120,93,0.12)";
   ctx.fillRect(490, 82, 220, 126);
   ctx.fillStyle = "rgba(255,255,255,0.94)";
-  roundRect(ctx, 18, 18, 286, 92, 10);
+  roundRect(ctx, 18, 18, 286, 74, 10);
   ctx.fill();
   ctx.fillStyle = "#17211d";
   ctx.textAlign = "left";
@@ -515,42 +466,50 @@ function renderCountryScene() {
   ctx.fillText("Scene key", 34, 39);
   ctx.font = "12px Inter, sans-serif";
   ctx.fillText("One representative persona per country", 34, 58);
-  ctx.fillText("Large red outside ring = strain", 34, 76);
-  ctx.fillText("Small A/B badge ring = country", 34, 94);
+  ctx.fillText("Red comment outline = higher strain", 34, 76);
   ctx.textAlign = "center";
   ctx.font = "bold 13px Inter, sans-serif";
   ctx.fillStyle = "#17211d";
   ctx.fillText(`Country A: ${state.profileA.country}`, 160, 112);
   ctx.fillText(`Country B: ${state.profileB.country}`, 600, 112);
-  drawSceneBubble(
-    ctx,
-    `${top.label}: ${pct(top.a)} vs ${pct(top.b)}`,
-    286,
-    110,
-    188,
-    top.diff >= 0 ? "#315f9d" : "#14785d",
-  );
-  ctx.font = "12px Inter, sans-serif";
-  ctx.fillStyle = "#50615a";
-  ctx.fillText("Compare context, not cultures", 380, 180);
+  const aHighStrain = (state.profileA.scores.strain ?? 0) > (state.profileB.scores.strain ?? 0);
+  const bHighStrain = (state.profileB.scores.strain ?? 0) > (state.profileA.scores.strain ?? 0);
+  const turn = Math.floor(state.tick / 150) % 3;
+  const aLines = [
+    `${aPersona.name}: My country reports ${pct(top.a)} for ${top.label.toLowerCase()}.`,
+    `${aPersona.name}: Support is ${pct(state.profileA.metrics.support)} and calm is ${pct(state.profileA.metrics.calm)}.`,
+    aHighStrain
+      ? `${aPersona.name}: My profile shows more strain, so I need context.`
+      : `${aPersona.name}: My profile shows less strain, so what helps here?`,
+  ];
+  const bLines = [
+    `${bPersona.name}: Mine is ${pct(top.b)}. What explains the gap?`,
+    `${bPersona.name}: Support is ${pct(state.profileB.metrics.support)} and calm is ${pct(state.profileB.metrics.calm)}.`,
+    bHighStrain
+      ? `${bPersona.name}: My profile shows more strain, so I need context.`
+      : `${bPersona.name}: My profile shows less strain, so what helps here?`,
+  ];
   drawSpeechBubble(
     ctx,
-    `${aPersona.name}: My country reports ${pct(top.a)} for ${top.label.toLowerCase()}.`,
+    aLines[turn],
     44,
     120,
     214,
     "#315f9d",
+    aHighStrain,
   );
   drawSpeechBubble(
     ctx,
-    `${bPersona.name}: Mine is ${pct(top.b)}. What context might explain the gap?`,
+    bLines[turn],
     502,
     120,
     214,
     "#14785d",
+    bHighStrain,
   );
   drawScenePersona(ctx, state.profileA, aPersona, 190, 236, true);
   drawScenePersona(ctx, state.profileB, bPersona, 570, 236, false);
+  state.frame = requestAnimationFrame(renderCountryScene);
 }
 
 function renderAll() {
@@ -566,6 +525,7 @@ function renderAll() {
   renderResearch();
   renderContextQuestions();
   renderReport();
+  if (state.frame) cancelAnimationFrame(state.frame);
   renderCountryScene();
   renderVisualKey();
 }
