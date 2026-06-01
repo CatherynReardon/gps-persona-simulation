@@ -27,12 +27,14 @@ const els = {
   gapBadges: document.querySelector("#gapBadges"),
   legend: document.querySelector("#comparisonLegend"),
   chart: document.querySelector("#comparisonChart"),
+  dialogue: document.querySelector("#wellDialogue"),
   questionTag: document.querySelector("#questionTag"),
   researchBuilder: document.querySelector("#researchBuilder"),
   interventionIdeas: document.querySelector("#interventionIdeas"),
   miniReport: document.querySelector("#miniReportText"),
   copyReport: document.querySelector("#copyReport"),
   canvas: document.querySelector("#wellCanvas"),
+  visualKey: document.querySelector("#wellVisualKey"),
 };
 
 const indicatorGroups = [
@@ -296,6 +298,43 @@ function renderChart() {
     .join("");
 }
 
+function focusPrompt() {
+  return {
+    strain: "stress, health, and coping",
+    support: "support networks and social resources",
+    purpose: "purpose and meaning",
+    work: "work meaning and choices",
+    balance: "calm, peace, and life balance",
+  }[els.question.value];
+}
+
+function renderDialogue() {
+  const personaA = personaFor(state.profileA, "A");
+  const personaB = personaFor(state.profileB, "B");
+  const top = gapRows(focusMap[els.question.value])[0];
+  const aValue = pct(top.a);
+  const bValue = pct(top.b);
+  const leader = top.diff >= 0 ? personaA : personaB;
+  const leaderProfile = top.diff >= 0 ? state.profileA : state.profileB;
+  const otherProfile = top.diff >= 0 ? state.profileB : state.profileA;
+  els.dialogue.innerHTML = `
+    <div class="conversation-thread" aria-label="Data-based role play conversation between Group A and Group B personas">
+      <div class="conversation-turn turn-a">
+        <img src="${avatarFor(personaA, true)}" alt="${personaA.name}, Group A representative" />
+        <div class="speech-bubble speech-a"><b>${personaA.name}</b><p>In my group, ${state.profileA.group}, the data show ${aValue} for ${top.label.toLowerCase()}. I would describe that as a group pattern, not as something true for every person like me.</p></div>
+      </div>
+      <div class="conversation-turn turn-b">
+        <img src="${avatarFor(personaB, false)}" alt="${personaB.name}, Group B representative" />
+        <div class="speech-bubble speech-b"><b>${personaB.name}</b><p>For my group, ${state.profileB.group}, the value is ${bValue}. The ${Math.abs(Math.round(top.diff * 100))}-point gap makes me wonder what context might explain the difference.</p></div>
+      </div>
+      <div class="conversation-turn turn-researcher">
+        <div class="researcher-avatar">R</div>
+        <div class="speech-bubble teacher-note"><b>Student researcher</b><p>${leader.name}'s group (${leaderProfile.group}) is higher on ${top.label.toLowerCase()} than ${otherProfile.group}. Ask a follow-up question about ${focusPrompt()}, then write one hypothesis and one limitation.</p></div>
+      </div>
+    </div>
+  `;
+}
+
 function renderResearchBuilder() {
   const focus = els.question.value;
   const a = state.profileA;
@@ -354,6 +393,23 @@ Limitation: The dataset reports response rates by group. It does not explain cau
 Ethical note: Avoid ranking groups as better or worse. Use the data to ask careful questions and design supportive interventions.`;
 }
 
+function renderVisualKey() {
+  const top = gapRows(focusMap[els.question.value])[0];
+  els.visualKey.innerHTML = `
+    <h4>How to Read the Persona Visuals</h4>
+    <table>
+      <thead><tr><th>Visual cue</th><th>What it means</th><th>Data source</th></tr></thead>
+      <tbody>
+        <tr><td>Red ring</td><td>Larger or darker ring means higher estimated strain.</td><td>Composite strain score</td></tr>
+        <tr><td>Blue / green body</td><td>Blue is Group A; green is Group B.</td><td>Selected comparison groups</td></tr>
+        <tr><td>White chest marker</td><td>Brighter marker means stronger wellbeing score.</td><td>Composite wellbeing score</td></tr>
+        <tr><td>Round side badge</td><td>Shows the active cue for the persona: support, calm, strain, purpose, or work.</td><td>Selected profile indicators</td></tr>
+        <tr><td>Center gap label</td><td>Shows the current largest focused gap: ${top.label}, ${pct(top.a)} vs ${pct(top.b)}.</td><td>Research focus selection</td></tr>
+      </tbody>
+    </table>
+  `;
+}
+
 function renderAll() {
   chooseProfiles();
   els.title.textContent = `${els.country.value}: ${els.dimension.value} comparison`;
@@ -361,9 +417,11 @@ function renderAll() {
   renderGroupCard(els.groupCardB, state.profileB, "Group B");
   renderFinding();
   renderChart();
+  renderDialogue();
   renderResearchBuilder();
   renderInterventions();
   renderReport();
+  renderVisualKey();
   resetScene();
 }
 
@@ -519,9 +577,10 @@ function drawScene() {
   ctx.font = "bold 12px Inter, sans-serif";
   ctx.fillStyle = "#50615a";
   ctx.textAlign = "center";
-  ctx.fillText("Role-play comparison", 381, 190);
+  const top = gapRows(focusMap[els.question.value])[0];
+  ctx.fillText(`${top.label}: ${pct(top.a)} vs ${pct(top.b)}`, 381, 190);
   ctx.font = "12px Inter, sans-serif";
-  ctx.fillText("Ask what might explain the gap", 381, 208);
+  ctx.fillText("Use the conversation to explain the gap", 381, 208);
 
   state.people.forEach((person) => {
     person.bubbleTimer += 1;

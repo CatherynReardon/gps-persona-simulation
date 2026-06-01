@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Comparative Wellbeing Research Lab</title>
-    <link rel="stylesheet" href="assets/styles.css?v=wellbeing-two-personas" />
+    <link rel="stylesheet" href="assets/styles.css?v=wellbeing-conversations" />
   </head>
   <body>
     <main class="app-shell wellbeing-app">
@@ -102,6 +102,14 @@
           <div id="comparisonChart" class="comparison-chart"></div>
         </section>
 
+        <section class="lab-card roleplay-card">
+          <div class="section-head">
+            <h3>Persona Conversation</h3>
+            <span class="muted">scripted from the selected data</span>
+          </div>
+          <div id="wellDialogue" class="persona-dialogue"></div>
+        </section>
+
         <div class="lab-grid">
           <section class="lab-card">
             <div class="section-head">
@@ -135,11 +143,12 @@
               <span class="muted">visual support, not evidence</span>
             </div>
             <canvas id="wellCanvas" width="760" height="360" aria-label="Animated population wellbeing scene"></canvas>
+            <div id="wellVisualKey" class="visual-key-table"></div>
           </article>
         </section>
       </section>
     </main>
 
-    <script src="assets/wellbeing.js?v=wellbeing-two-personas"></script>
+    <script src="assets/wellbeing.js?v=wellbeing-conversations"></script>
   </body>
 </html>

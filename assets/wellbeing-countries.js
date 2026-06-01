@@ -31,6 +31,7 @@ const els = {
   report: document.querySelector("#countryReportText"),
   copy: document.querySelector("#copyCountryReport"),
   canvas: document.querySelector("#countryCanvas"),
+  visualKey: document.querySelector("#countryVisualKey"),
 };
 
 const indicators = [
@@ -212,21 +213,14 @@ function focusPrompt() {
   }[els.focus.value];
 }
 
-function dialogueLine(persona, profile, row, side) {
-  const value = pct(side === "A" ? row.a : row.b);
-  const support = pct(profile.metrics.support);
-  const calm = pct(profile.metrics.calm);
-  const thriving = pct(profile.metrics.thriving);
-  const comparison = side === "A" ? state.profileB.country : state.profileA.country;
-  return `"In my ${profile.group} group in ${profile.country}, ${value} report ${row.label.toLowerCase()}. I would want to ask why that looks different from ${comparison}, especially since ${support} say they can count on help, ${calm} felt calm yesterday, and ${thriving} are thriving."`;
-}
-
 function renderDialogue() {
   const aPersona = personaFor(state.profileA, "A");
   const bPersona = personaFor(state.profileB, "B");
   const top = gapRows(focusMap[els.focus.value])[0];
   const leader = top.diff >= 0 ? aPersona.name : bPersona.name;
   const leaderCountry = top.diff >= 0 ? state.profileA.country : state.profileB.country;
+  const aValue = pct(top.a);
+  const bValue = pct(top.b);
   els.dialogue.innerHTML = `
     <div class="dialogue-stage" aria-label="Role play exchange between representative personas">
       <div class="dialogue-person group-a-dialogue">
@@ -237,9 +231,11 @@ function renderDialogue() {
         </div>
       </div>
       <div class="dialogue-exchange">
-        <div class="speech-bubble speech-a"><b>${aPersona.name}</b><p>${dialogueLine(aPersona, state.profileA, top, "A")}</p></div>
-        <div class="speech-bubble speech-b"><b>${bPersona.name}</b><p>${dialogueLine(bPersona, state.profileB, top, "B")}</p></div>
-        <div class="speech-bubble teacher-note"><b>Student researcher prompt</b><p>${leader} in ${leaderCountry} has the higher value for ${top.label.toLowerCase()} by ${Math.abs(Math.round(top.diff * 100))} points. Role play a follow-up interview about ${focusPrompt()}, then write one hypothesis and one limitation.</p></div>
+        <div class="speech-bubble speech-a"><b>${aPersona.name}</b><p>In ${state.profileA.country}, my ${state.profileA.group} group reports ${aValue} for ${top.label.toLowerCase()}. I notice the chart compares my group with the same group in ${state.profileB.country}.</p></div>
+        <div class="speech-bubble speech-b"><b>${bPersona.name}</b><p>In ${state.profileB.country}, my group reports ${bValue}. That creates a ${Math.abs(Math.round(top.diff * 100))}-point gap, so I would ask what social, economic, or cultural context might shape this pattern.</p></div>
+        <div class="speech-bubble speech-a"><b>${aPersona.name}</b><p>I also want to compare strengths: ${pct(state.profileA.metrics.support)} in my country say they can count on help, and ${pct(state.profileA.metrics.calm)} felt calm yesterday.</p></div>
+        <div class="speech-bubble speech-b"><b>${bPersona.name}</b><p>For my country, those values are ${pct(state.profileB.metrics.support)} for support and ${pct(state.profileB.metrics.calm)} for calm. We should use these numbers to form questions, not to rank countries.</p></div>
+        <div class="speech-bubble teacher-note"><b>Student researcher prompt</b><p>${leader} in ${leaderCountry} has the higher value for ${top.label.toLowerCase()}. Role play a follow-up interview about ${focusPrompt()}, then write one hypothesis, one alternative explanation, and one limitation.</p></div>
       </div>
       <div class="dialogue-person group-b-dialogue">
         <img src="${avatarFor(bPersona, false)}" alt="${bPersona.name}, Country B representative" />
@@ -332,6 +328,23 @@ Interpretation: The same demographic group shows different wellbeing patterns ac
 Limitation: The dataset reports group-level response rates. More context is needed before explaining why the countries differ.
 
 Ethical note: Avoid ranking countries or cultures. Use the comparison to generate careful research questions.`;
+}
+
+function renderVisualKey() {
+  const top = gapRows(focusMap[els.focus.value])[0];
+  els.visualKey.innerHTML = `
+    <h4>How to Read the Persona Visuals</h4>
+    <table>
+      <thead><tr><th>Visual cue</th><th>What it means</th><th>Data source</th></tr></thead>
+      <tbody>
+        <tr><td>Red ring</td><td>Larger or darker ring means higher estimated strain.</td><td>Composite strain score</td></tr>
+        <tr><td>Blue / green body</td><td>Blue is Country A; green is Country B.</td><td>Selected countries</td></tr>
+        <tr><td>White chest marker</td><td>Brighter marker means stronger wellbeing score.</td><td>Composite wellbeing score</td></tr>
+        <tr><td>Round side badge</td><td>Shows whether the persona represents Country A or Country B.</td><td>Country comparison setting</td></tr>
+        <tr><td>Center gap label</td><td>Shows the current largest focused gap: ${top.label}, ${pct(top.a)} vs ${pct(top.b)}.</td><td>Research focus selection</td></tr>
+      </tbody>
+    </table>
+  `;
 }
 
 function roundRect(ctx, x, y, w, h, r) {
@@ -502,6 +515,7 @@ function renderAll() {
   renderContextQuestions();
   renderReport();
   renderCountryScene();
+  renderVisualKey();
 }
 
 async function init() {
