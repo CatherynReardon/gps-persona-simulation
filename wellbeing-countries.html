@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cross-Country Wellbeing Lab</title>
+    <link rel="stylesheet" href="assets/styles.css?v=country-lab" />
+  </head>
+  <body>
+    <main class="app-shell wellbeing-app">
+      <aside class="control-panel" aria-label="Cross-country wellbeing controls">
+        <div class="brand-block">
+          <p class="eyebrow">Global Wellbeing Initiative</p>
+          <h1>Cross-Country Lab</h1>
+          <p class="source-note">Compare the same population group across two countries to study wellbeing patterns, gaps, and possible context effects.</p>
+        </div>
+
+        <section class="panel-section two-col">
+          <div>
+            <label for="countryA">Country A</label>
+            <select id="countryA"></select>
+          </div>
+          <div>
+            <label for="countryB">Country B</label>
+            <select id="countryB"></select>
+          </div>
+        </section>
+
+        <section class="panel-section">
+          <label for="countryDimension">Population lens</label>
+          <select id="countryDimension"></select>
+        </section>
+
+        <section class="panel-section">
+          <label for="countryGroup">Shared group</label>
+          <select id="countryGroup"></select>
+        </section>
+
+        <section class="panel-section">
+          <label for="countryFocus">Research focus</label>
+          <select id="countryFocus">
+            <option value="strain">Strain and coping</option>
+            <option value="support">Support and social resources</option>
+            <option value="purpose">Purpose and meaning</option>
+            <option value="work">Work meaning and choices</option>
+            <option value="balance">Calm, peace, and balance</option>
+          </select>
+        </section>
+
+        <section class="panel-section">
+          <button id="swapCountries" class="secondary-button" type="button">Swap Countries</button>
+        </section>
+
+        <section class="panel-section">
+          <a class="secondary-link" href="wellbeing.html">Back to Within-Country Lab</a>
+        </section>
+      </aside>
+
+      <section class="workspace">
+        <header class="workspace-top">
+          <div>
+            <p class="eyebrow">Cross-Country Research</p>
+            <h2 id="countryLabTitle">Loading wellbeing data...</h2>
+          </div>
+          <div class="metric-strip" aria-label="Dataset metrics">
+            <div>
+              <strong id="countryCount">--</strong>
+              <span>countries</span>
+            </div>
+            <div>
+              <strong id="profileCount">--</strong>
+              <span>profiles</span>
+            </div>
+            <div>
+              <strong id="sharedGroupLabel">--</strong>
+              <span>shared group</span>
+            </div>
+          </div>
+        </header>
+
+        <section class="lab-hero">
+          <article class="lab-card group-card" id="countryCardA"></article>
+          <article class="lab-card contrast-card">
+            <span class="card-label">Cross-Country Finding</span>
+            <h3 id="countryFinding">Select countries to compare</h3>
+            <p id="countryNarrative"></p>
+            <div id="countryGapBadges" class="gap-badges"></div>
+          </article>
+          <article class="lab-card group-card" id="countryCardB"></article>
+        </section>
+
+        <section class="lab-card chart-card">
+          <div class="section-head">
+            <h3>Indicator Comparison</h3>
+            <span class="muted">same group, Country A vs Country B</span>
+          </div>
+          <div id="countryLegend" class="comparison-legend"></div>
+          <div id="countryChart" class="comparison-chart"></div>
+        </section>
+
+        <div class="lab-grid">
+          <section class="lab-card">
+            <div class="section-head">
+              <h3>Research Framing</h3>
+              <span id="countryQuestionTag" class="pill">strain</span>
+            </div>
+            <div id="countryResearchBuilder" class="scenario-text"></div>
+          </section>
+
+          <section class="lab-card">
+            <div class="section-head">
+              <h3>Context Questions</h3>
+              <span class="muted">for discussion</span>
+            </div>
+            <div id="countryContextQuestions" class="reflection-prompts"></div>
+          </section>
+        </div>
+
+        <section class="lab-card mini-report">
+          <div class="section-head">
+            <h3>Mini Cross-Country Report</h3>
+            <button id="copyCountryReport" class="mini-button" type="button">Copy Text</button>
+          </div>
+          <textarea id="countryReportText" rows="9"></textarea>
+        </section>
+      </section>
+    </main>
+
+    <script src="assets/wellbeing-countries.js?v=country-lab"></script>
+  </body>
+</html>
