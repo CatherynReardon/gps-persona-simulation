@@ -333,12 +333,12 @@ Ethical note: Avoid ranking countries or cultures. Use the comparison to generat
 function renderVisualKey() {
   const top = gapRows(focusMap[els.focus.value])[0];
   els.visualKey.innerHTML = `
-    <h4>How to Read the Persona Visuals</h4>
+    <h4>How to Read the Persona Rings</h4>
     <table>
       <thead><tr><th>Visual cue</th><th>What it means</th><th>Data source</th></tr></thead>
       <tbody>
-        <tr><td>Outer red halo</td><td>Larger or darker red halo means higher estimated strain.</td><td>Composite strain score</td></tr>
-        <tr><td>Small badge ring</td><td>The colored ring around the A/B badge identifies which country the persona represents.</td><td>Country comparison setting</td></tr>
+        <tr><td>Large outside ring around the person</td><td>This ring is always red. Larger or darker red means higher estimated strain.</td><td>Composite strain score</td></tr>
+        <tr><td>Small ring around the A/B badge</td><td>This smaller colored ring does not show strain. It identifies whether the persona represents Country A or Country B.</td><td>Country comparison setting</td></tr>
         <tr><td>Blue / green body</td><td>Blue is Country A; green is Country B.</td><td>Selected countries</td></tr>
         <tr><td>White chest marker</td><td>Brighter marker means stronger wellbeing score.</td><td>Composite wellbeing score</td></tr>
         <tr><td>Center gap label</td><td>Shows the current largest focused gap: ${top.label}, ${pct(top.a)} vs ${pct(top.b)}.</td><td>Research focus selection</td></tr>
@@ -515,8 +515,8 @@ function renderCountryScene() {
   ctx.fillText("Scene key", 34, 39);
   ctx.font = "12px Inter, sans-serif";
   ctx.fillText("One representative persona per country", 34, 58);
-  ctx.fillText("Outer red halo = estimated strain", 34, 76);
-  ctx.fillText("Small badge ring = country identity", 34, 94);
+  ctx.fillText("Large red outside ring = strain", 34, 76);
+  ctx.fillText("Small A/B badge ring = country", 34, 94);
   ctx.textAlign = "center";
   ctx.font = "bold 13px Inter, sans-serif";
   ctx.fillStyle = "#17211d";
