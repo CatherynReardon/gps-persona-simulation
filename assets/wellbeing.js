@@ -370,24 +370,30 @@ function renderAll() {
 function resetScene() {
   const a = state.profileA;
   const b = state.profileB;
-  state.people = Array.from({ length: 12 }, (_, index) => {
-    const profile = index % 2 === 0 ? a : b;
-    const side = index % 2 === 0 ? "A" : "B";
-    const context = avatarContext(profile, index);
-    const persona = personaFor(profile, side);
-    return {
-      profile,
-      side: index % 2 === 0 ? "a" : "b",
-      persona,
-      x: 80 + Math.random() * 600,
-      y: 210 + Math.random() * 100,
-      tx: 80 + Math.random() * 600,
-      ty: 210 + Math.random() * 100,
-      speed: 0.4 + Math.random() * 0.55,
-      context,
-      bubbleTimer: 40 + index * 28,
-    };
-  });
+  state.people = [
+    {
+      profile: a,
+      side: "a",
+      persona: personaFor(a, "A"),
+      x: 210,
+      y: 258,
+      tx: 210,
+      ty: 258,
+      context: avatarContext(a, 0),
+      bubbleTimer: 20,
+    },
+    {
+      profile: b,
+      side: "b",
+      persona: personaFor(b, "B"),
+      x: 550,
+      y: 258,
+      tx: 550,
+      ty: 258,
+      context: avatarContext(b, 2),
+      bubbleTimer: 105,
+    },
+  ];
 }
 
 function avatarContext(profile, index) {
@@ -480,8 +486,8 @@ function drawLegend(ctx) {
   ctx.textAlign = "left";
   ctx.fillText("Scene key", 34, 39);
   ctx.font = "12px Inter, sans-serif";
-  ctx.fillText("Blue = Group A, green = Group B", 34, 58);
-  ctx.fillText("Ring size/darkness reflects strain", 34, 76);
+  ctx.fillText("One representative persona per group", 34, 58);
+  ctx.fillText("Red ring reflects estimated strain", 34, 76);
 }
 
 function drawScene() {
@@ -499,8 +505,9 @@ function drawScene() {
   ctx.fillRect(52, 80, 210, 126);
   ctx.fillStyle = "rgba(20,120,93,0.12)";
   ctx.fillRect(500, 92, 205, 114);
-  ctx.fillStyle = "#ffffff";
-  ctx.fillRect(295, 180, 165, 42);
+  ctx.fillStyle = "rgba(255,255,255,0.86)";
+  roundRect(ctx, 286, 168, 190, 58, 12);
+  ctx.fill();
   drawLegend(ctx);
   ctx.fillStyle = "#17211d";
   ctx.font = "bold 14px Inter, sans-serif";
@@ -509,19 +516,17 @@ function drawScene() {
   const personaB = personaFor(state.profileB, "B");
   ctx.fillText(`Group A: ${personaA.name} (${state.profileA.group})`, 72, 112);
   ctx.fillText(`Group B: ${personaB.name} (${state.profileB.group})`, 520, 124);
+  ctx.font = "bold 12px Inter, sans-serif";
+  ctx.fillStyle = "#50615a";
+  ctx.textAlign = "center";
+  ctx.fillText("Role-play comparison", 381, 190);
+  ctx.font = "12px Inter, sans-serif";
+  ctx.fillText("Ask what might explain the gap", 381, 208);
 
   state.people.forEach((person) => {
     person.bubbleTimer += 1;
-    const dx = person.tx - person.x;
-    const dy = person.ty - person.y;
-    const dist = Math.hypot(dx, dy);
-    if (dist < 7) {
-      person.tx = 65 + Math.random() * 635;
-      person.ty = 205 + Math.random() * 105;
-    } else {
-      person.x += (dx / dist) * person.speed;
-      person.y += (dy / dist) * person.speed;
-    }
+    person.x = person.tx + Math.sin(state.tick / 42 + (person.side === "a" ? 0 : Math.PI)) * 10;
+    person.y = person.ty + Math.cos(state.tick / 38 + (person.side === "a" ? 0 : Math.PI)) * 4;
   });
   state.people
     .slice()
@@ -536,44 +541,48 @@ function drawScene() {
       const y = person.y + bob;
       ctx.fillStyle = `rgba(186,74,66,${clamp(strain, 0.1, 0.55)})`;
       ctx.beginPath();
-      ctx.arc(x, y - 13, 24 + strain * 14, 0, Math.PI * 2);
+      ctx.arc(x, y - 22, 36 + strain * 18, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = "rgba(23,33,29,0.14)";
       ctx.beginPath();
-      ctx.ellipse(x, y + 42, 19, 6, 0, 0, Math.PI * 2);
+      ctx.ellipse(x, y + 64, 32, 9, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = color;
-      ctx.fillRect(x - 14, y + 2, 28, 34);
+      roundRect(ctx, x - 24, y + 8, 48, 56, 10);
+      ctx.fill();
       ctx.fillStyle = `rgba(255,255,255,${clamp(wellbeing, 0.35, 0.9)})`;
-      ctx.fillRect(x - 9, y + 9, 18, 10);
+      roundRect(ctx, x - 15, y + 20, 30, 14, 5);
+      ctx.fill();
       ctx.fillStyle = strain > 0.28 ? "#c9855c" : "#e0ad82";
       ctx.beginPath();
-      ctx.arc(x, y - 13, 18, 0, Math.PI * 2);
+      ctx.arc(x, y - 22, 29, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = "#2e211b";
       ctx.beginPath();
-      ctx.ellipse(x, y - 26, 18, 10, 0, Math.PI, 0);
+      ctx.ellipse(x, y - 42, 28, 15, 0, Math.PI, 0);
       ctx.fill();
       ctx.fillStyle = "#17211d";
       ctx.beginPath();
-      ctx.arc(x - 5, y - 13, 1.8, 0, Math.PI * 2);
-      ctx.arc(x + 5, y - 13, 1.8, 0, Math.PI * 2);
+      ctx.arc(x - 8, y - 22, 2.5, 0, Math.PI * 2);
+      ctx.arc(x + 8, y - 22, 2.5, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = "#ffffff";
       ctx.strokeStyle = person.context.color;
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.arc(x + 18, y + 8, 12, 0, Math.PI * 2);
+      ctx.arc(x + 30, y + 20, 15, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
       ctx.fillStyle = "#17211d";
-      ctx.font = "bold 7px Inter, sans-serif";
+      ctx.font = "bold 8px Inter, sans-serif";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(person.context.label.slice(0, 2).toUpperCase(), x + 18, y + 8);
+      ctx.fillText(person.context.label.slice(0, 2).toUpperCase(), x + 30, y + 20);
       ctx.fillStyle = "#17211d";
-      ctx.font = "bold 9px Inter, sans-serif";
-      ctx.fillText(person.persona.initials, x, y + 22);
+      ctx.font = "bold 11px Inter, sans-serif";
+      ctx.fillText(person.persona.initials, x, y + 45);
+      ctx.font = "bold 13px Inter, sans-serif";
+      ctx.fillText(person.persona.name, x, y + 82);
       drawBubble(ctx, person, x, y);
     });
   state.frame = requestAnimationFrame(drawScene);
