@@ -798,6 +798,59 @@ canvas {
   gap: 18px;
 }
 
+.research-directions {
+  margin-bottom: 18px;
+  padding: 18px;
+  background: #f7faf8;
+  border: 1px solid #dce8e2;
+  border-left: 5px solid var(--blue);
+  border-radius: 8px;
+}
+
+.research-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.research-steps div {
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #e0e9e4;
+  border-radius: 8px;
+}
+
+.research-steps b,
+.research-warning b {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.86rem;
+}
+
+.research-steps p,
+.research-warning p,
+.setup-help {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+.research-warning {
+  margin-top: 12px;
+  padding: 12px;
+  background: #fff9ea;
+  border: 1px solid #f0dfae;
+  border-radius: 8px;
+}
+
+.setup-help {
+  padding: 10px 11px;
+  background: #f3f7f5;
+  border: 1px solid #e0e9e4;
+  border-radius: 8px;
+}
+
 .research-grid.lower {
   grid-template-columns: minmax(420px, 1fr) minmax(320px, 0.8fr);
   margin-top: 18px;
@@ -1744,6 +1797,7 @@ canvas {
   .simulation-grid,
   .dashboard-summary,
   .dashboard-trait-grid,
+  .research-steps,
   .wellbeing-hero,
   .lab-hero,
   .lab-grid,
