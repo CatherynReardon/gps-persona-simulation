@@ -337,10 +337,10 @@ function renderVisualKey() {
     <table>
       <thead><tr><th>Visual cue</th><th>What it means</th><th>Data source</th></tr></thead>
       <tbody>
-        <tr><td>Red ring</td><td>Larger or darker ring means higher estimated strain.</td><td>Composite strain score</td></tr>
+        <tr><td>Outer red halo</td><td>Larger or darker red halo means higher estimated strain.</td><td>Composite strain score</td></tr>
+        <tr><td>Small badge ring</td><td>The colored ring around the A/B badge identifies which country the persona represents.</td><td>Country comparison setting</td></tr>
         <tr><td>Blue / green body</td><td>Blue is Country A; green is Country B.</td><td>Selected countries</td></tr>
         <tr><td>White chest marker</td><td>Brighter marker means stronger wellbeing score.</td><td>Composite wellbeing score</td></tr>
-        <tr><td>Round side badge</td><td>Shows whether the persona represents Country A or Country B.</td><td>Country comparison setting</td></tr>
         <tr><td>Center gap label</td><td>Shows the current largest focused gap: ${top.label}, ${pct(top.a)} vs ${pct(top.b)}.</td><td>Research focus selection</td></tr>
       </tbody>
     </table>
@@ -358,6 +358,23 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.quadraticCurveTo(x, y + h, x, y + h - r);
   ctx.lineTo(x, y + r);
   ctx.quadraticCurveTo(x, y, x + r, y);
+}
+
+function wrapCanvasText(ctx, text, maxWidth) {
+  const words = text.split(" ");
+  const lines = [];
+  let line = "";
+  words.forEach((word) => {
+    const test = `${line} ${word}`.trim();
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  });
+  if (line) lines.push(line);
+  return lines;
 }
 
 function drawScenePersona(ctx, profile, persona, x, y, isA) {
@@ -415,13 +432,13 @@ function drawScenePersona(ctx, profile, persona, x, y, isA) {
   ctx.font = "bold 14px Inter, sans-serif";
   ctx.fillText(persona.name, x, y + 86);
   ctx.fillStyle = accent;
-  roundRect(ctx, x - 72, y + 98, 144, 38, 10);
+  roundRect(ctx, x - 72, y + 92, 144, 34, 10);
   ctx.fill();
   ctx.fillStyle = "#263832";
   ctx.font = "bold 11px Inter, sans-serif";
-  ctx.fillText(profile.country, x, y + 114);
+  ctx.fillText(profile.country, x, y + 106);
   ctx.font = "10px Inter, sans-serif";
-  ctx.fillText(profile.group, x, y + 129);
+  ctx.fillText(profile.group, x, y + 120);
 }
 
 function drawSceneBubble(ctx, text, x, y, width, borderColor) {
@@ -453,6 +470,24 @@ function drawSceneBubble(ctx, text, x, y, width, borderColor) {
   });
 }
 
+function drawSpeechBubble(ctx, text, x, y, width, borderColor) {
+  ctx.font = "bold 11px Inter, sans-serif";
+  const lines = wrapCanvasText(ctx, text, width - 24).slice(0, 4);
+  const height = 22 + lines.length * 14;
+  ctx.fillStyle = "rgba(255,255,255,0.96)";
+  ctx.strokeStyle = borderColor;
+  ctx.lineWidth = 2;
+  roundRect(ctx, x, y, width, height, 10);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#17211d";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  lines.forEach((line, index) => {
+    ctx.fillText(line, x + width / 2, y + 16 + index * 14);
+  });
+}
+
 function renderCountryScene() {
   if (!els.canvas) return;
   const ctx = els.canvas.getContext("2d");
@@ -472,7 +507,7 @@ function renderCountryScene() {
   ctx.fillStyle = "rgba(20,120,93,0.12)";
   ctx.fillRect(490, 82, 220, 126);
   ctx.fillStyle = "rgba(255,255,255,0.94)";
-  roundRect(ctx, 18, 18, 268, 74, 10);
+  roundRect(ctx, 18, 18, 286, 92, 10);
   ctx.fill();
   ctx.fillStyle = "#17211d";
   ctx.textAlign = "left";
@@ -480,7 +515,8 @@ function renderCountryScene() {
   ctx.fillText("Scene key", 34, 39);
   ctx.font = "12px Inter, sans-serif";
   ctx.fillText("One representative persona per country", 34, 58);
-  ctx.fillText("Red ring reflects estimated strain", 34, 76);
+  ctx.fillText("Outer red halo = estimated strain", 34, 76);
+  ctx.fillText("Small badge ring = country identity", 34, 94);
   ctx.textAlign = "center";
   ctx.font = "bold 13px Inter, sans-serif";
   ctx.fillStyle = "#17211d";
@@ -490,15 +526,31 @@ function renderCountryScene() {
     ctx,
     `${top.label}: ${pct(top.a)} vs ${pct(top.b)}`,
     286,
-    142,
+    110,
     188,
     top.diff >= 0 ? "#315f9d" : "#14785d",
   );
   ctx.font = "12px Inter, sans-serif";
   ctx.fillStyle = "#50615a";
-  ctx.fillText("Compare context, not cultures", 380, 222);
-  drawScenePersona(ctx, state.profileA, aPersona, 190, 224, true);
-  drawScenePersona(ctx, state.profileB, bPersona, 570, 224, false);
+  ctx.fillText("Compare context, not cultures", 380, 180);
+  drawSpeechBubble(
+    ctx,
+    `${aPersona.name}: My country reports ${pct(top.a)} for ${top.label.toLowerCase()}.`,
+    44,
+    120,
+    214,
+    "#315f9d",
+  );
+  drawSpeechBubble(
+    ctx,
+    `${bPersona.name}: Mine is ${pct(top.b)}. What context might explain the gap?`,
+    502,
+    120,
+    214,
+    "#14785d",
+  );
+  drawScenePersona(ctx, state.profileA, aPersona, 190, 236, true);
+  drawScenePersona(ctx, state.profileB, bPersona, 570, 236, false);
 }
 
 function renderAll() {

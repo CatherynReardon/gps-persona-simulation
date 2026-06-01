@@ -400,10 +400,10 @@ function renderVisualKey() {
     <table>
       <thead><tr><th>Visual cue</th><th>What it means</th><th>Data source</th></tr></thead>
       <tbody>
-        <tr><td>Red ring</td><td>Larger or darker ring means higher estimated strain.</td><td>Composite strain score</td></tr>
+        <tr><td>Outer red halo</td><td>Larger or darker red halo means higher estimated strain.</td><td>Composite strain score</td></tr>
+        <tr><td>Small badge ring</td><td>The colored ring around the small badge shows the active cue being discussed: support, calm, strain, purpose, or work.</td><td>Selected profile indicator</td></tr>
         <tr><td>Blue / green body</td><td>Blue is Group A; green is Group B.</td><td>Selected comparison groups</td></tr>
         <tr><td>White chest marker</td><td>Brighter marker means stronger wellbeing score.</td><td>Composite wellbeing score</td></tr>
-        <tr><td>Round side badge</td><td>Shows the active cue for the persona: support, calm, strain, purpose, or work.</td><td>Selected profile indicators</td></tr>
         <tr><td>Center gap label</td><td>Shows the current largest focused gap: ${top.label}, ${pct(top.a)} vs ${pct(top.b)}.</td><td>Research focus selection</td></tr>
       </tbody>
     </table>
@@ -515,29 +515,52 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.quadraticCurveTo(x, y, x + r, y);
 }
 
+function wrapCanvasText(ctx, text, maxWidth) {
+  const words = text.split(" ");
+  const lines = [];
+  let line = "";
+  words.forEach((word) => {
+    const test = `${line} ${word}`.trim();
+    if (ctx.measureText(test).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  });
+  if (line) lines.push(line);
+  return lines;
+}
+
 function drawBubble(ctx, person, x, y) {
-  const show = person.bubbleTimer % 260 < 118;
-  if (!show) return;
-  const text = person.context.text;
+  const top = gapRows(focusMap[els.question.value])[0];
+  const value = person.side === "a" ? top.a : top.b;
+  const other = person.side === "a" ? state.profileB.group : state.profileA.group;
+  const text =
+    person.side === "a"
+      ? `My group reports ${pct(value)} for ${top.label.toLowerCase()}. How does that compare with ${other}?`
+      : `My group is ${pct(value)}. The gap helps us ask what context might matter.`;
   ctx.font = "bold 12px Inter, sans-serif";
-  const width = clamp(ctx.measureText(text).width + 24, 110, 235);
+  const width = 220;
+  const lines = wrapCanvasText(ctx, text, width - 24).slice(0, 3);
+  const height = 24 + lines.length * 15;
   const bx = clamp(x - width / 2, 10, ctx.canvas.width - width - 10);
-  const by = clamp(y - 82, 12, ctx.canvas.height - 100);
+  const by = clamp(y - 116, 12, ctx.canvas.height - height - 10);
   ctx.fillStyle = "rgba(255,255,255,0.94)";
   ctx.strokeStyle = person.context.color;
   ctx.lineWidth = 2;
-  roundRect(ctx, bx, by, width, 34, 9);
+  roundRect(ctx, bx, by, width, height, 9);
   ctx.fill();
   ctx.stroke();
   ctx.fillStyle = "#17211d";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(text, bx + width / 2, by + 17);
+  lines.forEach((line, index) => ctx.fillText(line, bx + width / 2, by + 18 + index * 15));
 }
 
 function drawLegend(ctx) {
   ctx.fillStyle = "rgba(255,255,255,0.94)";
-  roundRect(ctx, 18, 18, 250, 72, 10);
+  roundRect(ctx, 18, 18, 276, 92, 10);
   ctx.fill();
   ctx.fillStyle = "#17211d";
   ctx.font = "bold 13px Inter, sans-serif";
@@ -545,7 +568,8 @@ function drawLegend(ctx) {
   ctx.fillText("Scene key", 34, 39);
   ctx.font = "12px Inter, sans-serif";
   ctx.fillText("One representative persona per group", 34, 58);
-  ctx.fillText("Red ring reflects estimated strain", 34, 76);
+  ctx.fillText("Outer red halo = estimated strain", 34, 76);
+  ctx.fillText("Small badge ring = active discussion cue", 34, 94);
 }
 
 function drawScene() {
@@ -563,8 +587,8 @@ function drawScene() {
   ctx.fillRect(52, 80, 210, 126);
   ctx.fillStyle = "rgba(20,120,93,0.12)";
   ctx.fillRect(500, 92, 205, 114);
-  ctx.fillStyle = "rgba(255,255,255,0.86)";
-  roundRect(ctx, 286, 168, 190, 58, 12);
+  ctx.fillStyle = "rgba(255,255,255,0.9)";
+  roundRect(ctx, 300, 214, 160, 38, 10);
   ctx.fill();
   drawLegend(ctx);
   ctx.fillStyle = "#17211d";
@@ -578,9 +602,9 @@ function drawScene() {
   ctx.fillStyle = "#50615a";
   ctx.textAlign = "center";
   const top = gapRows(focusMap[els.question.value])[0];
-  ctx.fillText(`${top.label}: ${pct(top.a)} vs ${pct(top.b)}`, 381, 190);
+  ctx.fillText(`${top.label}`, 380, 230);
   ctx.font = "12px Inter, sans-serif";
-  ctx.fillText("Use the conversation to explain the gap", 381, 208);
+  ctx.fillText(`${pct(top.a)} vs ${pct(top.b)}`, 380, 245);
 
   state.people.forEach((person) => {
     person.bubbleTimer += 1;
