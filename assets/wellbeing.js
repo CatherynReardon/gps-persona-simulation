@@ -79,6 +79,15 @@ const personaNames = [
   "Dante",
 ];
 
+const avatarPalette = [
+  { skin: "#b7794b", hair: "#1e1715", shirt: "#2f5f9d" },
+  { skin: "#8f5f3f", hair: "#2c201a", shirt: "#3f7b65" },
+  { skin: "#d7a06f", hair: "#3a2418", shirt: "#6a5aa8" },
+  { skin: "#c8875e", hair: "#151515", shirt: "#bf6b45" },
+  { skin: "#e0b184", hair: "#5b321f", shirt: "#457b9d" },
+  { skin: "#9f6d4f", hair: "#211916", shirt: "#2a9d8f" },
+];
+
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
@@ -181,19 +190,46 @@ function personaFor(profile, side) {
     need,
     strength,
     initials: name.slice(0, 2).toUpperCase(),
+    seed,
   };
+}
+
+function avatarFor(persona, isA) {
+  const colors = avatarPalette[persona.seed % avatarPalette.length];
+  const hairShape =
+    persona.seed % 2 === 0
+      ? `<path d="M48 34c8-13 31-15 44-3 7 6 9 16 7 26-8-8-18-12-31-12-11 0-20 3-29 10-2-7 0-15 9-21Z" fill="${colors.hair}"/>`
+      : `<path d="M43 49c1-19 14-31 33-31s33 13 35 32c-10-6-21-9-34-9-14 0-25 3-34 8Z" fill="${colors.hair}"/>`;
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" role="img" aria-label="${persona.name} representative persona portrait">
+      <rect width="150" height="150" rx="30" fill="${isA ? "#e9f0fb" : "#e5f2ec"}"/>
+      <circle cx="75" cy="78" r="54" fill="${isA ? "#d8e5f7" : "#d6e9df"}"/>
+      <path d="M31 139c6-27 23-42 44-42s38 15 44 42H31Z" fill="${colors.shirt}"/>
+      <circle cx="75" cy="68" r="31" fill="${colors.skin}"/>
+      ${hairShape}
+      <circle cx="63" cy="70" r="3.3" fill="#231f20"/>
+      <circle cx="87" cy="70" r="3.3" fill="#231f20"/>
+      <path d="M64 86c7 6 16 6 23 0" fill="none" stroke="#5a3328" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="51" cy="78" r="7" fill="${colors.skin}"/>
+      <circle cx="99" cy="78" r="7" fill="${colors.skin}"/>
+      <rect x="52" y="112" width="46" height="12" rx="6" fill="#ffffff" opacity=".8"/>
+      <text x="75" y="122" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" font-weight="700" fill="${isA ? "#2f5f9d" : "#3f7b65"}">${persona.initials}</text>
+    </svg>
+  `;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
 function renderGroupCard(target, profile, label) {
   const groupClass = label === "Group A" ? "group-a-card" : "group-b-card";
   const side = label === "Group A" ? "A" : "B";
+  const isA = side === "A";
   const persona = personaFor(profile, side);
   target.classList.toggle("group-a-shell", label === "Group A");
   target.classList.toggle("group-b-shell", label === "Group B");
   target.innerHTML = `
     <span class="card-label ${groupClass}">${label}</span>
     <div class="group-card-top">
-      <div class="well-mini-avatar ${groupClass}">${persona.initials}</div>
+      <img class="persona-portrait ${groupClass}" src="${avatarFor(persona, isA)}" alt="${persona.name}, representative persona for ${profile.group} in ${profile.country}" />
       <div>
         <h3>${persona.name}</h3>
         <p>Representative of ${profile.group} in ${profile.country}</p>
