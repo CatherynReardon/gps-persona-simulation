@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cross-Country Wellbeing Lab</title>
-    <link rel="stylesheet" href="assets/styles.css?v=country-roleplay" />
+    <link rel="stylesheet" href="assets/styles.css?v=country-two-personas" />
   </head>
   <body>
     <main class="app-shell wellbeing-app">
@@ -124,16 +124,26 @@
           </section>
         </div>
 
-        <section class="lab-card mini-report">
-          <div class="section-head">
-            <h3>Mini Cross-Country Report</h3>
-            <button id="copyCountryReport" class="mini-button" type="button">Copy Text</button>
-          </div>
-          <textarea id="countryReportText" rows="9"></textarea>
+        <section class="lab-grid lower">
+          <article class="lab-card mini-report">
+            <div class="section-head">
+              <h3>Mini Cross-Country Report</h3>
+              <button id="copyCountryReport" class="mini-button" type="button">Copy Text</button>
+            </div>
+            <textarea id="countryReportText" rows="9"></textarea>
+          </article>
+
+          <article class="lab-card scene-card">
+            <div class="section-head">
+              <h3>Two-Country Persona Scene</h3>
+              <span class="muted">visual support, not evidence</span>
+            </div>
+            <canvas id="countryCanvas" width="760" height="360" aria-label="Two representative personas comparing wellbeing across countries"></canvas>
+          </article>
         </section>
       </section>
     </main>
 
-    <script src="assets/wellbeing-countries.js?v=country-roleplay"></script>
+    <script src="assets/wellbeing-countries.js?v=country-two-personas"></script>
   </body>
 </html>

@@ -30,6 +30,7 @@ const els = {
   context: document.querySelector("#countryContextQuestions"),
   report: document.querySelector("#countryReportText"),
   copy: document.querySelector("#copyCountryReport"),
+  canvas: document.querySelector("#countryCanvas"),
 };
 
 const indicators = [
@@ -333,6 +334,160 @@ Limitation: The dataset reports group-level response rates. More context is need
 Ethical note: Avoid ranking countries or cultures. Use the comparison to generate careful research questions.`;
 }
 
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+}
+
+function drawScenePersona(ctx, profile, persona, x, y, isA) {
+  const color = isA ? "#315f9d" : "#14785d";
+  const accent = isA ? "#e9f0fb" : "#e5f2ec";
+  const strain = profile.scores.strain ?? 0.2;
+  const wellbeing = profile.scores.wellbeing ?? 0.6;
+  ctx.fillStyle = `rgba(186,74,66,${clamp(strain, 0.12, 0.55)})`;
+  ctx.beginPath();
+  ctx.arc(x, y - 22, 38 + strain * 18, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "rgba(23,33,29,0.14)";
+  ctx.beginPath();
+  ctx.ellipse(x, y + 68, 34, 10, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = color;
+  roundRect(ctx, x - 25, y + 8, 50, 58, 10);
+  ctx.fill();
+  ctx.fillStyle = `rgba(255,255,255,${clamp(wellbeing, 0.36, 0.9)})`;
+  roundRect(ctx, x - 16, y + 21, 32, 15, 5);
+  ctx.fill();
+  ctx.fillStyle = persona.seed % 3 === 0 ? "#c9855c" : persona.seed % 3 === 1 ? "#e0ad82" : "#a76f4d";
+  ctx.beginPath();
+  ctx.arc(x, y - 22, 30, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = persona.seed % 2 === 0 ? "#2e211b" : "#151515";
+  ctx.beginPath();
+  ctx.ellipse(x, y - 43, 29, 16, 0, Math.PI, 0);
+  ctx.fill();
+  ctx.fillStyle = "#17211d";
+  ctx.beginPath();
+  ctx.arc(x - 8, y - 22, 2.5, 0, Math.PI * 2);
+  ctx.arc(x + 8, y - 22, 2.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "#5a3328";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(x, y - 11, 8, 0.1 * Math.PI, 0.9 * Math.PI);
+  ctx.stroke();
+  ctx.fillStyle = "#fff";
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(x + 31, y + 20, 16, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#17211d";
+  ctx.font = "bold 8px Inter, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(isA ? "A" : "B", x + 31, y + 20);
+  ctx.fillStyle = "#17211d";
+  ctx.font = "bold 11px Inter, sans-serif";
+  ctx.fillText(persona.initials, x, y + 46);
+  ctx.font = "bold 14px Inter, sans-serif";
+  ctx.fillText(persona.name, x, y + 86);
+  ctx.fillStyle = accent;
+  roundRect(ctx, x - 72, y + 98, 144, 38, 10);
+  ctx.fill();
+  ctx.fillStyle = "#263832";
+  ctx.font = "bold 11px Inter, sans-serif";
+  ctx.fillText(profile.country, x, y + 114);
+  ctx.font = "10px Inter, sans-serif";
+  ctx.fillText(profile.group, x, y + 129);
+}
+
+function drawSceneBubble(ctx, text, x, y, width, borderColor) {
+  ctx.fillStyle = "rgba(255,255,255,0.95)";
+  ctx.strokeStyle = borderColor;
+  ctx.lineWidth = 2;
+  roundRect(ctx, x, y, width, 58, 10);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#17211d";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = "bold 12px Inter, sans-serif";
+  const words = text.split(" ");
+  const lines = [];
+  let line = "";
+  words.forEach((word) => {
+    const test = `${line} ${word}`.trim();
+    if (ctx.measureText(test).width > width - 24 && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  });
+  if (line) lines.push(line);
+  lines.slice(0, 3).forEach((item, index) => {
+    ctx.fillText(item, x + width / 2, y + 18 + index * 14);
+  });
+}
+
+function renderCountryScene() {
+  if (!els.canvas) return;
+  const ctx = els.canvas.getContext("2d");
+  const canvas = els.canvas;
+  const aPersona = personaFor(state.profileA, "A");
+  const bPersona = personaFor(state.profileB, "B");
+  const top = gapRows(focusMap[els.focus.value])[0];
+  const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  grad.addColorStop(0, "#f7fbf9");
+  grad.addColorStop(1, "#e8eef8");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#d9e8e1";
+  ctx.fillRect(0, 248, canvas.width, 122);
+  ctx.fillStyle = "rgba(49,95,157,0.12)";
+  ctx.fillRect(50, 82, 220, 126);
+  ctx.fillStyle = "rgba(20,120,93,0.12)";
+  ctx.fillRect(490, 82, 220, 126);
+  ctx.fillStyle = "rgba(255,255,255,0.94)";
+  roundRect(ctx, 18, 18, 268, 74, 10);
+  ctx.fill();
+  ctx.fillStyle = "#17211d";
+  ctx.textAlign = "left";
+  ctx.font = "bold 13px Inter, sans-serif";
+  ctx.fillText("Scene key", 34, 39);
+  ctx.font = "12px Inter, sans-serif";
+  ctx.fillText("One representative persona per country", 34, 58);
+  ctx.fillText("Red ring reflects estimated strain", 34, 76);
+  ctx.textAlign = "center";
+  ctx.font = "bold 13px Inter, sans-serif";
+  ctx.fillStyle = "#17211d";
+  ctx.fillText(`Country A: ${state.profileA.country}`, 160, 112);
+  ctx.fillText(`Country B: ${state.profileB.country}`, 600, 112);
+  drawSceneBubble(
+    ctx,
+    `${top.label}: ${pct(top.a)} vs ${pct(top.b)}`,
+    286,
+    142,
+    188,
+    top.diff >= 0 ? "#315f9d" : "#14785d",
+  );
+  ctx.font = "12px Inter, sans-serif";
+  ctx.fillStyle = "#50615a";
+  ctx.fillText("Compare context, not cultures", 380, 222);
+  drawScenePersona(ctx, state.profileA, aPersona, 190, 224, true);
+  drawScenePersona(ctx, state.profileB, bPersona, 570, 224, false);
+}
+
 function renderAll() {
   chooseProfiles();
   if (!state.profileA || !state.profileB) return;
@@ -346,6 +501,7 @@ function renderAll() {
   renderResearch();
   renderContextQuestions();
   renderReport();
+  renderCountryScene();
 }
 
 async function init() {
