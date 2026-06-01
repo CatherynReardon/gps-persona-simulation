@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GPS Persona Simulator</title>
-    <link rel="stylesheet" href="assets/styles.css" />
+    <link rel="stylesheet" href="assets/styles.css?v=gps-three-layers" />
   </head>
   <body>
     <main class="app-shell">
@@ -105,7 +105,7 @@
       <section class="workspace">
         <header class="workspace-top">
           <div>
-            <p class="eyebrow">Live Simulation</p>
+            <p class="eyebrow">GPS Behavioral Preferences Lab</p>
             <h2 id="personaName">Loading dataset...</h2>
           </div>
           <div class="metric-strip" aria-label="Dataset metrics">
@@ -124,6 +124,44 @@
           </div>
         </header>
 
+        <section class="dashboard-section" aria-labelledby="dashboardTitle">
+          <div class="section-head">
+            <div>
+              <h3 id="dashboardTitle">Layer 1: Data Dashboard</h3>
+              <p class="microcopy">Read the six GPS preference traits before entering the role-play. The goal is interpretation, not prediction.</p>
+            </div>
+            <span class="pill">GPS foundation</span>
+          </div>
+          <div class="dashboard-summary">
+            <article class="dashboard-stat">
+              <span>Study scale</span>
+              <b>80,000+ respondents</b>
+              <p>Surveyed across 76 countries.</p>
+            </article>
+            <article class="dashboard-stat">
+              <span>Behavioral traits</span>
+              <b>6 preference measures</b>
+              <p>Risk, time, trust, altruism, and reciprocity.</p>
+            </article>
+            <article class="dashboard-stat">
+              <span>Interpretation frame</span>
+              <b>Variation matters</b>
+              <p>Within-country differences can be larger than between-country differences.</p>
+            </article>
+          </div>
+          <div id="dashboardTraitGrid" class="dashboard-trait-grid"></div>
+          <div class="interpretation-note">
+            Use this dashboard to ask how data, culture, individual variation, and bias shape interpretation. It should not be used to claim what a real person from a country will do.
+          </div>
+        </section>
+
+        <div class="layer-heading">
+          <div>
+            <h3>Layer 2: Persona Cards</h3>
+            <p class="microcopy">The generated persona combines country context, age and gender filters, trait evidence, and uncertainty notes.</p>
+          </div>
+        </div>
+
         <div class="simulation-grid">
           <section class="persona-card">
             <div class="persona-head">
@@ -134,6 +172,9 @@
               </div>
             </div>
             <p id="personaNarrative" class="persona-narrative"></p>
+            <div id="personaDetails" class="persona-details"></div>
+            <div id="personaUncertainty" class="uncertainty-note"></div>
+            <div id="personaReflection" class="reflection-callout"></div>
             <div class="decision-band">
               <div>
                 <span>Predicted action</span>
@@ -164,7 +205,7 @@
 
           <section class="scenario-panel">
             <div class="section-head">
-              <h3>Scenario Reasoning</h3>
+              <h3>Layer 3: Simulation + Reflection</h3>
               <span id="scenarioTag" class="pill">investment</span>
             </div>
             <div id="scenarioText" class="scenario-text"></div>
@@ -355,6 +396,6 @@
       </section>
     </main>
 
-    <script src="assets/app.js"></script>
+    <script src="assets/app.js?v=gps-three-layers"></script>
   </body>
 </html>

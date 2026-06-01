@@ -263,6 +263,10 @@ const els = {
   personaTitle: document.querySelector("#personaTitle"),
   personaSubtitle: document.querySelector("#personaSubtitle"),
   personaNarrative: document.querySelector("#personaNarrative"),
+  dashboardTraitGrid: document.querySelector("#dashboardTraitGrid"),
+  personaDetails: document.querySelector("#personaDetails"),
+  personaUncertainty: document.querySelector("#personaUncertainty"),
+  personaReflection: document.querySelector("#personaReflection"),
   decisionLabel: document.querySelector("#decisionLabel"),
   probabilityFill: document.querySelector("#probabilityFill"),
   probabilityText: document.querySelector("#probabilityText"),
@@ -305,6 +309,15 @@ const els = {
   debriefPrompts: document.querySelector("#debriefPrompts"),
 };
 
+const traitDisplayLabels = {
+  patience: "Time preference / delayed reward",
+  risktaking: "Risk preference",
+  trust: "Trust",
+  altruism: "Altruism",
+  posrecip: "Positive reciprocity",
+  negrecip: "Negative reciprocity",
+};
+
 const geo = {
   AFG: [66, 34], DZA: [2, 28], ARG: [-64, -34], AUS: [134, -25], AUT: [14, 47],
   BGD: [90, 24], BOL: [-64, -17], BIH: [18, 44], BWA: [24, -22], BRA: [-52, -10],
@@ -334,6 +347,22 @@ function sigmoid(value) {
 
 function format(value) {
   return Number.isFinite(value) ? value.toFixed(2) : "--";
+}
+
+function traitLabel(key) {
+  return traitDisplayLabels[key] ?? state.data?.traits?.find((trait) => trait.key === key)?.label ?? key;
+}
+
+function globalComparisonText(value, globalValue = 0) {
+  const delta = value - globalValue;
+  if (Math.abs(delta) < 0.15) return "near the global average";
+  return delta > 0 ? "above the global average" : "below the global average";
+}
+
+function traitLevel(value) {
+  if (value >= 0.45) return "higher";
+  if (value <= -0.45) return "lower";
+  return "moderate";
 }
 
 function pct(value) {
@@ -623,17 +652,49 @@ function renderControls() {
   els.traitControls.innerHTML = "";
   state.data.traits.forEach(({ key, label }) => {
     const value = traitValue(key);
+    const displayLabel = traitLabel(key) || label;
     const wrap = document.createElement("div");
     wrap.className = "trait-control";
     wrap.innerHTML = `
       <header>
-        <b>${label}</b>
+        <b>${displayLabel}</b>
         <span id="value-${key}">${format(value)}</span>
       </header>
-      <input aria-label="${label}" data-trait="${key}" type="range" min="-2" max="2" step="0.01" value="${value}">
+      <input aria-label="${displayLabel}" data-trait="${key}" type="range" min="-2" max="2" step="0.01" value="${value}">
     `;
     els.traitControls.appendChild(wrap);
   });
+}
+
+function renderDashboard(traits) {
+  if (!els.dashboardTraitGrid) return;
+  const country = state.country;
+  els.dashboardTraitGrid.innerHTML = state.data.traits
+    .map(({ key }) => {
+      const value = traits[key] ?? 0;
+      const countryValue = country.traits[key] ?? 0;
+      const globalValue = state.data.global.means[key] ?? 0;
+      const summary = country.traitSummary?.[key];
+      const marker = clamp(50 + ((value - globalValue) / 4) * 100, 3, 97);
+      const countryMarker = clamp(50 + ((countryValue - globalValue) / 4) * 100, 3, 97);
+      const spread = Number.isFinite(summary?.sd) ? `Within-country spread SD ${format(summary.sd)}` : "Within-country spread varies";
+      return `
+        <article class="dashboard-trait-card">
+          <div class="dashboard-trait-top">
+            <span class="card-label">${traitLabel(key)}</span>
+            <b>${format(value)}</b>
+          </div>
+          <div class="dashboard-scale" aria-hidden="true">
+            <i class="global-line"></i>
+            <i class="country-dot" style="left:${countryMarker}%"></i>
+            <span style="left:${marker}%"></span>
+          </div>
+          <p>${country.country} is ${globalComparisonText(value, globalValue)} for this selected persona profile.</p>
+          <small>${spread}; individual variation remains central.</small>
+        </article>
+      `;
+    })
+    .join("");
 }
 
 function renderTraitBars(traits) {
@@ -645,7 +706,7 @@ function renderTraitBars(traits) {
     const row = document.createElement("div");
     row.className = "trait-bar";
     row.innerHTML = `
-      <b>${label}</b>
+      <b>${traitLabel(key) || label}</b>
       <div class="bar-track">
         <div class="bar-fill" style="left:${clamp(start, 0, 100)}%;width:${clamp(width, 2, 50)}%;background:${value >= 0 ? "var(--green)" : "var(--red)"}"></div>
       </div>
@@ -691,7 +752,7 @@ function drawRadar(traits) {
     ctx.lineTo(x, y);
     ctx.strokeStyle = "#edf2ef";
     ctx.stroke();
-    const label = state.data.traits.find((trait) => trait.key === key).label;
+    const label = traitLabel(key);
     ctx.fillStyle = "#42524b";
     ctx.textAlign = Math.cos(angle) > 0.2 ? "left" : Math.cos(angle) < -0.2 ? "right" : "center";
     ctx.fillText(label, cx + Math.cos(angle) * (radius + 24), cy + Math.sin(angle) * (radius + 24));
@@ -719,6 +780,10 @@ function renderScenario(traits) {
   const model = scenarioModels[scenario];
   const probability = scoreScenario(traits, scenario);
   const decision = probability >= 0.5 ? model.positive : model.negative;
+  const driverValue = traits[model.driver] ?? 0;
+  const globalDriver = state.data.global.means[model.driver] ?? 0;
+  const driverDelta = driverValue - globalDriver;
+  const driverDirection = globalComparisonText(driverValue, globalDriver);
   els.scenarioTag.textContent = model.tag;
   els.decisionLabel.textContent = decision;
   els.probabilityFill.style.width = pct(probability);
@@ -735,17 +800,29 @@ function renderScenario(traits) {
       <p>${model.prompt}</p>
     </div>
     <div class="reason-row">
-      <b>Readout</b>
+      <b>Choice</b>
       <p>The model estimates a ${pct(probability)} chance that this persona ${decision.toLowerCase()}.</p>
+    </div>
+    <div class="reason-row">
+      <b>Main trait</b>
+      <p>${traitLabel(model.driver)} is the scenario driver. This profile scores ${format(driverValue)}, ${driverDirection} (${driverDelta >= 0 ? "+" : ""}${format(driverDelta)} from the global baseline).</p>
     </div>
     <div class="reason-row">
       <b>Drivers</b>
       <p>${strongest
         .map(({ trait, contribution }) => {
-          const label = state.data.traits.find((item) => item.key === trait).label.toLowerCase();
+          const label = traitLabel(trait).toLowerCase();
           return `${label} ${contribution >= 0 ? "raises" : "lowers"} the score`;
         })
         .join("; ")}.</p>
+    </div>
+    <div class="reason-row prompt-row">
+      <b>Metacognition</b>
+      <p>What assumption did you make before seeing the trait data?</p>
+    </div>
+    <div class="reason-row prompt-row ethics-row">
+      <b>Ethics</b>
+      <p>How could this type of model be misused?</p>
     </div>
   `;
 }
@@ -1483,6 +1560,13 @@ function renderPersona() {
   const ranked = Object.entries(traits).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]));
   const phraseOne = traitPhrase(ranked[0][0], ranked[0][1]);
   const phraseTwo = traitPhrase(ranked[1][0], ranked[1][1]);
+  const scenario = els.scenarioSelect.value;
+  const model = scenarioModels[scenario];
+  const probability = scoreScenario(traits, scenario);
+  const likelyPattern = probability >= 0.5 ? model.positive : model.negative;
+  const traitProfile = state.data.traits
+    .map(({ key }) => `<span class="trait-tag">${traitLabel(key)}: ${traitLevel(traits[key] ?? 0)} (${format(traits[key] ?? 0)})</span>`)
+    .join("");
 
   els.personaName.textContent = `${country.country} persona`;
   els.personaTitle.textContent = `${age}-year-old ${gender} respondent`;
@@ -1490,8 +1574,29 @@ function renderPersona() {
   els.avatar.innerHTML = `<img alt="" src="${avatarSvg({ ...person, isocode: country.isocode }, 128)}">`;
   els.countryIso.textContent = country.isocode;
   els.sampleSize.textContent = country.n.toLocaleString();
-  els.personaNarrative.textContent = `This simulated respondent is ${phraseOne} and ${phraseTwo}. The persona is anchored in an individual GPS record, then exposed through editable country-standardized preference scores.`;
+  els.personaNarrative.textContent = `This simulated respondent is ${phraseOne} and ${phraseTwo}. The role is anchored in a sampled GPS record, then interpreted through editable standardized preference scores.`;
+  els.personaDetails.innerHTML = `
+    <div class="persona-detail-row">
+      <b>Country context</b>
+      <p>${country.country} (${country.isocode}), country sample n=${country.n.toLocaleString()}.</p>
+    </div>
+    <div class="persona-detail-row">
+      <b>Age and gender filter</b>
+      <p>${age}-year-old ${gender}; change the sidebar filters to sample a different role.</p>
+    </div>
+    <div class="persona-detail-row wide">
+      <b>Six-trait profile</b>
+      <div class="trait-tags">${traitProfile}</div>
+    </div>
+    <div class="persona-detail-row">
+      <b>Likely decision pattern</b>
+      <p>${likelyPattern} in the selected scenario, with ${traitLabel(model.driver).toLowerCase()} carrying much of the interpretation.</p>
+    </div>
+  `;
+  els.personaUncertainty.textContent = "This persona is simulated from population-level preference patterns and should not be interpreted as representing all people from this country. Individual differences remain central.";
+  els.personaReflection.innerHTML = `<b>Reflection prompt</b><p>Before role-playing, name one assumption you might make from the country label alone and one piece of trait evidence that complicates it.</p>`;
 
+  renderDashboard(traits);
   renderControls();
   renderTraitBars(traits);
   drawRadar(traits);
@@ -1621,6 +1726,7 @@ async function init() {
     renderTraitBars(activeTraits());
     drawRadar(activeTraits());
     renderScenario(activeTraits());
+    renderDashboard(activeTraits());
   });
 }
 
