@@ -60,6 +60,25 @@ const focusMap = {
   balance: ["balance", "peace", "calm", "thriving", "struggling"],
 };
 
+const personaNames = [
+  "Amina",
+  "Jonah",
+  "Maya",
+  "Theo",
+  "Leila",
+  "Mateo",
+  "Nora",
+  "Samir",
+  "Elena",
+  "Kai",
+  "Priya",
+  "Owen",
+  "Zara",
+  "Leo",
+  "Mina",
+  "Dante",
+];
+
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
@@ -70,6 +89,10 @@ function pct(value) {
 
 function score(value) {
   return Number.isFinite(value) ? Math.round(value * 100) : "--";
+}
+
+function hashCode(text) {
+  return [...String(text)].reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) >>> 0, 7);
 }
 
 function populateSelect(select, values, selected) {
@@ -125,17 +148,55 @@ function topPurpose(profile) {
   ].sort((a, b) => (profile.metrics[b[0]] ?? 0) - (profile.metrics[a[0]] ?? 0))[0][1];
 }
 
+function personaFor(profile, side) {
+  const seed = hashCode(`${profile.country}-${profile.dimension}-${profile.group}-${side}`);
+  const name = personaNames[seed % personaNames.length];
+  const ageMatch = profile.dimension === "Age" ? profile.group.match(/\d+/) : null;
+  const age = ageMatch ? Number(ageMatch[0]) + 3 : 34 + (seed % 24);
+  const roleMap = {
+    Age: `${profile.group} respondent`,
+    Gender: `${profile.group.toLowerCase()} respondent`,
+    "Employment Status": profile.group.toLowerCase(),
+    "Per Capita Income Quintiles": `${profile.group.toLowerCase()} income group`,
+    "Feelings About Household Income": profile.group.toLowerCase(),
+    "Urban/Rural": profile.group.toLowerCase(),
+  };
+  const role = roleMap[profile.dimension] ?? profile.group;
+  const need =
+    (profile.scores.strain ?? 0) > 0.3
+      ? "could use more support and stability"
+      : "has useful wellbeing strengths to build from";
+  const strength =
+    (profile.metrics.support ?? 0) > 0.75
+      ? "social support"
+      : (profile.metrics.calm ?? 0) > 0.7
+        ? "calm"
+        : (profile.metrics.enjoy_work ?? 0) > 0.75
+          ? "work meaning"
+          : "purpose";
+  return {
+    name,
+    age,
+    role,
+    need,
+    strength,
+    initials: name.slice(0, 2).toUpperCase(),
+  };
+}
+
 function renderGroupCard(target, profile, label) {
   const groupClass = label === "Group A" ? "group-a-card" : "group-b-card";
+  const side = label === "Group A" ? "A" : "B";
+  const persona = personaFor(profile, side);
   target.classList.toggle("group-a-shell", label === "Group A");
   target.classList.toggle("group-b-shell", label === "Group B");
   target.innerHTML = `
     <span class="card-label ${groupClass}">${label}</span>
     <div class="group-card-top">
-      <div class="well-mini-avatar ${groupClass}">${profile.group.slice(0, 2).toUpperCase()}</div>
+      <div class="well-mini-avatar ${groupClass}">${persona.initials}</div>
       <div>
-        <h3>${profile.group}</h3>
-        <p>${profile.dimension} in ${profile.country}</p>
+        <h3>${persona.name}</h3>
+        <p>Representative of ${profile.group} in ${profile.country}</p>
       </div>
     </div>
     <div class="score-grid">
@@ -143,7 +204,7 @@ function renderGroupCard(target, profile, label) {
       <div><span>Strain</span><b>${score(profile.scores.strain)}</b></div>
       <div><span>Purpose</span><b>${score(profile.scores.purpose)}</b></div>
     </div>
-    <p class="group-summary">${pct(profile.metrics.thriving)} thriving, ${pct(profile.metrics.support)} can count on help, ${pct(profile.metrics.calm)} felt calm yesterday. Dominant purpose cue: ${topPurpose(profile)}.</p>
+    <p class="group-summary">${persona.name} is a ${persona.age}-year-old ${persona.role}. This persona represents group-level patterns: ${pct(profile.metrics.thriving)} thriving, ${pct(profile.metrics.support)} can count on help, and ${pct(profile.metrics.calm)} felt calm yesterday. Likely strength: ${persona.strength}; research need: ${persona.need}.</p>
   `;
 }
 
@@ -172,9 +233,11 @@ function renderFinding() {
 function renderChart() {
   const keys = focusMap[els.question.value];
   const rows = gapRows(keys);
+  const personaA = personaFor(state.profileA, "A");
+  const personaB = personaFor(state.profileB, "B");
   els.legend.innerHTML = `
-    <div class="legend-item"><span class="legend-swatch group-a"></span><b>Group A:</b> ${state.profileA.group}</div>
-    <div class="legend-item"><span class="legend-swatch group-b"></span><b>Group B:</b> ${state.profileB.group}</div>
+    <div class="legend-item"><span class="legend-swatch group-a"></span><b>Group A:</b> ${personaA.name}, representing ${state.profileA.group}</div>
+    <div class="legend-item"><span class="legend-swatch group-b"></span><b>Group B:</b> ${personaB.name}, representing ${state.profileB.group}</div>
     <div class="legend-note">Color key: Group A is always blue and appears on the top bar. Group B is always green and appears on the bottom bar.</div>
   `;
   els.chart.innerHTML = rows
@@ -238,13 +301,15 @@ function renderInterventions() {
 function renderReport() {
   const a = state.profileA;
   const b = state.profileB;
+  const personaA = personaFor(a, "A");
+  const personaB = personaFor(b, "B");
   const gaps = gapRows(focusMap[els.question.value]);
   const top = gaps[0];
   els.miniReport.value = `Research question: ${els.researchBuilder.querySelector(".reason-row p")?.textContent ?? ""}
 
-Comparison: ${a.group} vs ${b.group} in ${a.country} using the ${a.dimension} lens.
+Comparison: ${personaA.name} represents ${a.group}; ${personaB.name} represents ${b.group} in ${a.country} using the ${a.dimension} lens.
 
-Key finding: The largest focused gap is ${top.label}, with ${pct(top.a)} for ${a.group} and ${pct(top.b)} for ${b.group}.
+Key finding: The largest focused gap is ${top.label}, with ${pct(top.a)} for ${personaA.name}'s group and ${pct(top.b)} for ${personaB.name}'s group.
 
 Interpretation: This suggests that wellbeing patterns differ across groups, especially around ${top.label.toLowerCase()}. The pattern should be interpreted as a group-level tendency, not an individual prediction.
 
@@ -271,10 +336,13 @@ function resetScene() {
   const b = state.profileB;
   state.people = Array.from({ length: 12 }, (_, index) => {
     const profile = index % 2 === 0 ? a : b;
+    const side = index % 2 === 0 ? "A" : "B";
     const context = avatarContext(profile, index);
+    const persona = personaFor(profile, side);
     return {
       profile,
       side: index % 2 === 0 ? "a" : "b",
+      persona,
       x: 80 + Math.random() * 600,
       y: 210 + Math.random() * 100,
       tx: 80 + Math.random() * 600,
@@ -401,8 +469,10 @@ function drawScene() {
   ctx.fillStyle = "#17211d";
   ctx.font = "bold 14px Inter, sans-serif";
   ctx.textAlign = "left";
-  ctx.fillText(`Group A: ${state.profileA.group}`, 72, 112);
-  ctx.fillText(`Group B: ${state.profileB.group}`, 520, 124);
+  const personaA = personaFor(state.profileA, "A");
+  const personaB = personaFor(state.profileB, "B");
+  ctx.fillText(`Group A: ${personaA.name} (${state.profileA.group})`, 72, 112);
+  ctx.fillText(`Group B: ${personaB.name} (${state.profileB.group})`, 520, 124);
 
   state.people.forEach((person) => {
     person.bubbleTimer += 1;
@@ -467,7 +537,7 @@ function drawScene() {
       ctx.fillText(person.context.label.slice(0, 2).toUpperCase(), x + 18, y + 8);
       ctx.fillStyle = "#17211d";
       ctx.font = "bold 9px Inter, sans-serif";
-      ctx.fillText(person.side.toUpperCase(), x, y + 22);
+      ctx.fillText(person.persona.initials, x, y + 22);
       drawBubble(ctx, person, x, y);
     });
   state.frame = requestAnimationFrame(drawScene);
