@@ -97,12 +97,12 @@ const classroomRounds = [
 ];
 
 const reflectionPrompts = [
-  "What did your persona do that you personally would not have done?",
-  "Which trait most changed the outcome: trust, patience, risk taking, reciprocity, altruism, or negative reciprocity?",
-  "How did country-level tendencies differ from individual role-play choices?",
-  "What hidden context could reverse the model prediction?",
-  "How should researchers or policymakers avoid stereotyping when using data like this?",
-  "What new variable would make this simulation more realistic?",
+  "What was your first hypothesis about the persona's decision?",
+  "Which GPS trait variable provided the strongest evidence for your interpretation?",
+  "What evidence made you revise or question your first assumption?",
+  "What alternative explanation could also fit the same behavior?",
+  "How could a researcher misuse country-level trait data?",
+  "What additional psychological or social variable would improve this study?",
 ];
 
 const researchConditions = [
@@ -177,11 +177,11 @@ const trialScenarios = [
 ];
 
 const debriefPrompts = [
-  "Which information influenced you most: country, traits, avatar, observed behavior, or scenario?",
-  "Did hiding country labels change how you judged the persona?",
-  "Did trait data make you more careful or more confident?",
-  "Where could this simulation lead to overgeneralization?",
-  "What would you change before using this in a formal study?",
+  "Which variable influenced your judgment most: country label, trait data, avatar, observed behavior, or scenario?",
+  "Did hiding country labels change your hypothesis about the persona?",
+  "Did trait data make your interpretation more careful or simply more confident?",
+  "Where could this simulation lead to overgeneralization or confirmation bias?",
+  "What would you change before using this as a formal psychology study?",
 ];
 
 const scenarioModels = {
@@ -857,12 +857,12 @@ function renderScenario(traits) {
         .join("; ")}.</p>
     </div>
     <div class="reason-row prompt-row">
-      <b>Think</b>
-      <p>What assumption did you make before seeing the trait data?</p>
+      <b>Research reflection</b>
+      <p>What was your hypothesis before seeing the trait data, and did the evidence support or challenge it?</p>
     </div>
     <div class="reason-row prompt-row ethics-row">
       <b>Ethics check</b>
-      <p>How could this type of model be misused?</p>
+      <p>How could this type of model be misused if people treated trait patterns as facts about individuals or countries?</p>
     </div>
   `;
 }
@@ -1676,7 +1676,7 @@ function renderPersona() {
     </div>
   `;
   els.personaUncertainty.textContent = "Important: this simulated persona does not represent everyone from this country. Real people vary widely.";
-  els.personaReflection.innerHTML = `<b>Student prompt</b><p>Name one assumption you had at first. Then name one trait clue that made your thinking more careful.</p>`;
+  els.personaReflection.innerHTML = `<b>Study prompt</b><p>Write one hypothesis about this persona's choice. Then name one trait variable that supports or challenges your hypothesis.</p>`;
 
   renderDashboard(traits);
   renderControls();

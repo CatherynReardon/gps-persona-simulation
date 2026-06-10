@@ -12,7 +12,7 @@
         <div class="brand-block">
           <p class="eyebrow">Global Preferences Survey</p>
           <h1>Student Role-Play Lab</h1>
-          <p class="source-note">Choose a country, meet a simulated persona, role-play a decision, and reflect on bias.</p>
+          <p class="source-note">Run a psychology study simulation: form a hypothesis, inspect trait data, role-play a decision, and reflect on bias.</p>
         </div>
 
         <section class="panel-section">
@@ -127,25 +127,43 @@
         <section class="student-guide" aria-labelledby="studentGuideTitle">
           <div>
             <p class="eyebrow">Start Here</p>
-            <h3 id="studentGuideTitle">What students do in this lab</h3>
+            <h3 id="studentGuideTitle">Think like a psychology researcher</h3>
           </div>
           <div class="student-steps">
             <article>
-              <b>1. Meet the persona</b>
-              <p>Use the country, age, and gender filters to generate a simulated role.</p>
+              <b>1. Form a hypothesis</b>
+              <p>Predict how a persona might decide before seeing all of the trait evidence.</p>
             </article>
             <article>
-              <b>2. Read the clues</b>
-              <p>Look for the strongest GPS traits. Treat them as clues, not facts about all people.</p>
+              <b>2. Inspect the data</b>
+              <p>Use the GPS traits as psychological variables, not as labels for a whole country.</p>
             </article>
             <article>
-              <b>3. Role-play a choice</b>
-              <p>Decide what the persona might do in the scenario and explain which trait shaped it.</p>
+              <b>3. Make an observation</b>
+              <p>Role-play a choice and connect it to trait evidence from the plot and card.</p>
             </article>
             <article>
-              <b>4. Reflect on bias</b>
-              <p>Ask what assumption you made and how the model could be misused.</p>
+              <b>4. Evaluate the limits</b>
+              <p>Ask what the data explains, what it misses, and how bias could shape interpretation.</p>
             </article>
+          </div>
+        </section>
+
+        <section class="study-lens" aria-label="Psychology study lens">
+          <span class="card-label">Psychological Study Lens</span>
+          <div class="study-lens-grid">
+            <div>
+              <b>Research question</b>
+              <p>How do risk, delayed reward, trust, altruism, and reciprocity shape social decisions?</p>
+            </div>
+            <div>
+              <b>Variables</b>
+              <p>GPS trait scores are the variables students use to explain behavior in the simulation.</p>
+            </div>
+            <div>
+              <b>Interpretation rule</b>
+              <p>Trait data can support a hypothesis, but it cannot prove what a real individual will do.</p>
+            </div>
           </div>
         </section>
 
@@ -153,7 +171,7 @@
           <div class="section-head">
             <div>
               <h3 id="dashboardTitle">Step 1: Look at the Data Clues</h3>
-              <p class="microcopy">These six traits help students form evidence-based questions before role-play begins.</p>
+              <p class="microcopy">Treat these six traits as psychological variables. Students use them to support, revise, or reject a hypothesis about behavior.</p>
             </div>
             <span class="pill">Not a prediction</span>
           </div>
@@ -292,7 +310,7 @@
           <div class="section-head">
             <div>
               <h3>Student Role-Play Activity</h3>
-              <p class="microcopy">Use this section when students are ready to perform, discuss, and debrief.</p>
+              <p class="microcopy">Use this section as the applied study: students make observations, cite trait evidence, and evaluate interpretations.</p>
             </div>
             <button id="advanceRound" class="small-action" type="button">Next Psychology Step</button>
           </div>
@@ -315,7 +333,7 @@
               <div id="roundPrompts" class="prompt-list"></div>
               <div class="learning-note">
                 <b>How this affects the activity</b>
-                <p>The button above moves students to the next reflection step. It does not score the game. It helps students connect role-play choices to psychological traits such as trust, risk preference, reciprocity, altruism, and delayed reward.</p>
+                <p>The button above moves students through a study sequence. It does not score the game. It helps students connect observations to psychological traits such as trust, risk preference, reciprocity, altruism, and delayed reward.</p>
               </div>
             </article>
           </div>
@@ -343,7 +361,7 @@
           <article class="reflection-panel">
             <div class="section-head compact">
               <h4>Reflection Prompts</h4>
-              <span class="muted">score reasoning, not winning</span>
+              <span class="muted">evaluate evidence, not winning</span>
             </div>
             <div id="reflectionPrompts" class="reflection-prompts"></div>
           </article>

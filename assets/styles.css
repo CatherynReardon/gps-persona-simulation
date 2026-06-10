@@ -264,6 +264,7 @@ input[type="range"] {
 
 .metric-strip div,
 .student-guide,
+.study-lens,
 .persona-card,
 .radar-panel,
 .trait-panel,
@@ -305,6 +306,7 @@ input[type="range"] {
 
 .persona-card,
 .student-guide,
+.study-lens,
 .radar-panel,
 .trait-panel,
 .scenario-panel,
@@ -349,6 +351,35 @@ input[type="range"] {
 }
 
 .student-steps p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.38;
+}
+
+.study-lens {
+  margin-bottom: 18px;
+}
+
+.study-lens-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.study-lens-grid div {
+  padding: 13px;
+  background: #f7faf8;
+  border: 1px solid #e0e9e4;
+  border-radius: 8px;
+}
+
+.study-lens-grid b {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.study-lens-grid p {
   margin: 0;
   color: var(--muted);
   font-size: 0.84rem;
@@ -2027,6 +2058,7 @@ canvas {
 
   .workspace-top,
   .student-guide,
+  .study-lens-grid,
   .simulation-grid,
   .dashboard-summary,
   .dashboard-trait-grid,
