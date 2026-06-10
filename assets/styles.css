@@ -1102,24 +1102,36 @@ canvas {
 
 .team-cards {
   display: grid;
-  grid-template-columns: repeat(2, minmax(190px, 1fr));
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
   gap: 12px;
 }
 
 .student-card {
   display: grid;
-  grid-template-columns: 54px 1fr;
-  gap: 11px;
-  align-items: center;
+  gap: 12px;
+  align-items: start;
   padding: 12px;
   background: #f8fbf9;
   border: 1px solid #e0e9e4;
   border-radius: 8px;
 }
 
+.role-card-help {
+  margin: 0 0 14px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.student-card-top {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 11px;
+  align-items: center;
+}
+
 .student-card h5 {
-  margin: 0 0 4px;
-  font-size: 0.92rem;
+  margin: 0 0 3px;
+  font-size: 1rem;
 }
 
 .student-card p {
@@ -1129,11 +1141,32 @@ canvas {
   line-height: 1.33;
 }
 
+.student-card .card-label {
+  margin-bottom: 4px;
+}
+
 .student-card .trait-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
   margin-top: 8px;
+}
+
+.role-card-section {
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #e0e9e4;
+  border-radius: 8px;
+}
+
+.role-card-section b {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.82rem;
+}
+
+.role-card-section p {
+  color: #3e4d47;
 }
 
 .trait-tag {

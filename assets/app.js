@@ -1320,9 +1320,35 @@ function topTraitTags(person) {
     .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))
     .slice(0, 2)
     .map(([key, value]) => {
-      const label = state.data.traits.find((trait) => trait.key === key)?.label ?? key;
+      const label = traitLabel(key);
       return `${label}: ${format(value)}`;
     });
+}
+
+function roleCardMove(person) {
+  const traits = person.traits ?? {};
+  const trust = traits.trust ?? 0;
+  const risk = traits.risktaking ?? 0;
+  const patience = traits.patience ?? 0;
+  const altruism = traits.altruism ?? 0;
+  const posrecip = traits.posrecip ?? 0;
+  const negrecip = traits.negrecip ?? 0;
+  if (trust > 0.45 && posrecip > 0.2) return "Open with cooperation, then ask how partners will reciprocate.";
+  if (trust < -0.35) return "Ask for proof, safeguards, or a small test before fully cooperating.";
+  if (risk > 0.45) return "Suggest a bold option, but explain what payoff makes the risk worth it.";
+  if (patience > 0.45) return "Argue for waiting, planning, or choosing a larger delayed benefit.";
+  if (altruism > 0.45) return "Offer help early, especially if the need is concrete and credible.";
+  if (negrecip > 0.45) return "Push back if another group acts unfairly, and explain the fairness concern.";
+  return "Start with a balanced offer and ask one question before deciding.";
+}
+
+function roleCardQuestion(person) {
+  const strongest = Object.entries(person.traits ?? {})
+    .filter(([, value]) => Number.isFinite(value))
+    .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))[0];
+  if (!strongest) return "What extra context would help you role-play this person responsibly?";
+  const [key, value] = strongest;
+  return `How does ${traitLabel(key).toLowerCase()} (${format(value)}) shape your choice without turning into a stereotype?`;
 }
 
 function renderTeamCards() {
@@ -1332,13 +1358,29 @@ function renderTeamCards() {
       const age = Math.round(person.age ?? 35);
       const gender = person.gender === 1 ? "male" : person.gender === 2 ? "female" : "respondent";
       const tags = topTraitTags(person).map((tag) => `<span class="trait-tag">${tag}</span>`).join("");
+      const firstMove = roleCardMove(person);
+      const discussionQuestion = roleCardQuestion(person);
       return `
         <article class="student-card">
-          ${avatarHtml(person)}
-          <div>
-            <h5>Team ${index + 1}: ${person.country}</h5>
-            <p>${age}-year-old ${gender}${person.region ? ` from ${person.region}` : ""}</p>
+          <div class="student-card-top">
+            ${avatarHtml(person)}
+            <div>
+              <span class="card-label">Team ${index + 1} role</span>
+              <h5>${person.country}</h5>
+              <p>${age}-year-old ${gender}${person.region ? ` from ${person.region}` : ""}</p>
+            </div>
+          </div>
+          <div class="role-card-section">
+            <b>Trait evidence</b>
             <div class="trait-tags">${tags}</div>
+          </div>
+          <div class="role-card-section">
+            <b>First move</b>
+            <p>${firstMove}</p>
+          </div>
+          <div class="role-card-section">
+            <b>Debrief question</b>
+            <p>${discussionQuestion}</p>
           </div>
         </article>
       `;
