@@ -1791,7 +1791,7 @@ async function init() {
   els.beginStudy.addEventListener("click", beginResearchStudy);
   els.nextTrial.addEventListener("click", nextResearchTrial);
   els.recordTrial.addEventListener("click", recordResearchTrial);
-  els.exportResearch.addEventListener("click", exportResearchCsv);
+  if (els.exportResearch) els.exportResearch.addEventListener("click", exportResearchCsv);
   els.ageInput.addEventListener("change", () => {
     choosePersona();
     renderPersona();
