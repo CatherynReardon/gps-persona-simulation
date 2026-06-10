@@ -50,44 +50,44 @@ const missions = [
 
 const classroomRounds = [
   {
-    title: "Round 1: Meet the persona",
-    instruction: "Each student receives one role card. Read the top traits and decide how the persona might speak, negotiate, and react.",
+    title: "Step 1: Identify the trait clues",
+    instruction: "Each student receives one role card. Read the top traits and decide what those clues suggest about motivation, decision-making, and social behavior.",
     prompts: [
-      "What does this persona want from the mission?",
-      "Which trait should shape their first decision?",
-      "What would make this persona uncomfortable?",
+      "Which trait is strongest for this persona?",
+      "How might that trait affect a decision in the mission?",
+      "What should you avoid assuming from the country label alone?",
     ],
   },
   {
-    title: "Round 2: Make a choice",
-    instruction: "Role-play one scenario individually. Each student explains which trait clue shaped the persona's choice.",
+    title: "Step 2: Make an evidence-based choice",
+    instruction: "Role-play one scenario individually. Each student makes a choice and names the trait evidence that shaped it.",
     prompts: [
-      "What does your persona say first?",
-      "Does the model predict trust, caution, or conflict?",
-      "What evidence from the trait scores supports that move?",
+      "What does your persona choose?",
+      "Which trait supports that choice?",
+      "What evidence from the trait plot supports or complicates your answer?",
     ],
   },
   {
-    title: "Round 3: Add pressure",
-    instruction: "Add one complication: scarce resources, a broken promise, public scrutiny, or a tempting risky opportunity.",
+    title: "Step 3: Test the choice under pressure",
+    instruction: "Add one complication: scarce resources, a broken promise, public scrutiny, or a tempting risky opportunity. Ask whether the same trait still explains the choice.",
     prompts: [
-      "Which slider would change under this pressure?",
+      "Which trait becomes more important under this pressure?",
       "Would the persona cooperate, delay, retaliate, or ask for safeguards?",
-      "Who becomes a better or worse partner now?",
+      "What extra context would change your interpretation?",
     ],
   },
   {
-    title: "Round 4: Discuss",
-    instruction: "Students compare choices while staying in character. Each student must cite at least two GPS traits.",
+    title: "Step 4: Compare interpretations",
+    instruction: "Students compare choices while staying in character. Each student must cite at least two GPS traits and explain why the same data could be interpreted differently.",
     prompts: [
-      "What concession can your persona make?",
-      "What condition would your persona require?",
-      "Which other persona do you trust most, and why?",
+      "Where did two students interpret the same trait differently?",
+      "Which second trait changed the interpretation?",
+      "How did individual variation complicate the country-level pattern?",
     ],
   },
   {
-    title: "Round 5: Debrief",
-    instruction: "Step out of character. Discuss what the simulation helped you see and where it could mislead.",
+    title: "Step 5: Debrief bias and limits",
+    instruction: "Step out of character. Discuss what the simulation helped you see about psychology and where it could mislead.",
     prompts: [
       "Where did the data help you reason?",
       "Where could this become a stereotype?",
@@ -1403,7 +1403,7 @@ function renderRoundGuide() {
 
 function renderHistory() {
   if (!state.history.length) {
-    els.roundHistory.innerHTML = `<div class="prompt-chip">No rounds recorded yet. Click Advance Round to capture the current activity state.</div>`;
+    els.roundHistory.innerHTML = `<div class="prompt-chip">No reflection steps recorded yet. Click Next Psychology Step after students discuss a prompt. The log is for debriefing, not scoring.</div>`;
     return;
   }
   els.roundHistory.innerHTML = state.history
@@ -1436,7 +1436,7 @@ function summarizeRound() {
   const cooperative = state.interactions.filter((event) => event.cooperative).length;
   const conflict = state.interactions.filter((event) => event.tone === "conflict").length;
   const caution = state.interactions.filter((event) => event.tone === "caution").length;
-  return `${state.interactions.length} encounters: ${cooperative} cooperative, ${caution} cautious, ${conflict} conflict-heavy. Each student should defend or challenge one outcome using trait evidence.`;
+  return `${state.interactions.length} simulated encounters were visible: ${cooperative} cooperative, ${caution} cautious, ${conflict} conflict-heavy. Use this entry to ask which psychological trait best explains one choice, and where the trait evidence might be incomplete.`;
 }
 
 function advanceClassroomRound() {

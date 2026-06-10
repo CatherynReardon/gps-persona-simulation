@@ -1077,6 +1077,29 @@ canvas {
   line-height: 1.48;
 }
 
+.learning-note {
+  margin-top: 14px;
+  padding: 12px;
+  color: #33443d;
+  background: #fff9ea;
+  border: 1px solid #f0dfae;
+  border-left: 5px solid var(--gold);
+  border-radius: 8px;
+}
+
+.learning-note b {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.84rem;
+}
+
+.learning-note p {
+  margin: 0;
+  color: #4d5b55;
+  font-size: 0.84rem;
+  line-height: 1.42;
+}
+
 .mission-actions {
   display: flex;
   flex-wrap: wrap;
