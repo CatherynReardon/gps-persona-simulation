@@ -212,15 +212,15 @@
 
           <section class="radar-panel">
             <div class="section-head">
-              <h3>Persona Trait Map</h3>
+              <h3>Trait Evidence Plot</h3>
               <span id="countryIso" class="pill">---</span>
             </div>
-            <p class="chart-explainer">This map shows the six GPS trait clues for the current persona. Points farther from the center mean that trait is higher; points closer to the center mean it is lower.</p>
-            <canvas id="radarCanvas" width="520" height="360" aria-label="Persona trait map showing six GPS trait clues"></canvas>
+            <p class="chart-explainer">Each row plots one GPS trait on the same standardized scale. Use it to compare the persona with the country average and the global baseline.</p>
+            <div id="traitMapPlot" class="trait-map-plot" aria-label="Data plot of persona traits compared with country average and global baseline"></div>
             <div class="chart-key">
-              <span><b>Center</b> lower trait score</span>
-              <span><b>Outer edge</b> higher trait score</span>
-              <span><b>Green area</b> current persona profile</span>
+              <span><b>Gray line</b> global average</span>
+              <span><b>Blue dot</b> country average</span>
+              <span><b>Green dot</b> current persona</span>
             </div>
           </section>
 

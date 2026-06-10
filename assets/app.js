@@ -271,6 +271,7 @@ const els = {
   probabilityFill: document.querySelector("#probabilityFill"),
   probabilityText: document.querySelector("#probabilityText"),
   radarCanvas: document.querySelector("#radarCanvas"),
+  traitMapPlot: document.querySelector("#traitMapPlot"),
   traitBars: document.querySelector("#traitBars"),
   scenarioText: document.querySelector("#scenarioText"),
   scenarioTag: document.querySelector("#scenarioTag"),
@@ -318,15 +319,6 @@ const traitDisplayLabels = {
   negrecip: "Negative reciprocity",
 };
 
-const radarDisplayLabels = {
-  patience: "Time",
-  risktaking: "Risk",
-  trust: "Trust",
-  altruism: "Altruism",
-  posrecip: "Positive\nreciprocity",
-  negrecip: "Negative\nreciprocity",
-};
-
 const geo = {
   AFG: [66, 34], DZA: [2, 28], ARG: [-64, -34], AUS: [134, -25], AUT: [14, 47],
   BGD: [90, 24], BOL: [-64, -17], BIH: [18, 44], BWA: [24, -22], BRA: [-52, -10],
@@ -360,10 +352,6 @@ function format(value) {
 
 function traitLabel(key) {
   return traitDisplayLabels[key] ?? state.data?.traits?.find((trait) => trait.key === key)?.label ?? key;
-}
-
-function radarLabel(key) {
-  return radarDisplayLabels[key] ?? traitLabel(key);
 }
 
 function globalComparisonText(value, globalValue = 0) {
@@ -729,7 +717,42 @@ function renderTraitBars(traits) {
   });
 }
 
+function renderTraitMapPlot(traits) {
+  if (!els.traitMapPlot) return;
+  els.traitMapPlot.innerHTML = state.data.traits
+    .map(({ key }) => {
+      const personaValue = traits[key] ?? 0;
+      const countryValue = state.country.traits[key] ?? 0;
+      const globalValue = state.data.global.means[key] ?? 0;
+      const personaLeft = clamp(((personaValue + 2) / 4) * 100, 0, 100);
+      const countryLeft = clamp(((countryValue + 2) / 4) * 100, 0, 100);
+      const globalLeft = clamp(((globalValue + 2) / 4) * 100, 0, 100);
+      return `
+        <div class="trait-map-row">
+          <div class="trait-map-label">
+            <b>${traitLabel(key)}</b>
+            <span>${globalComparisonText(personaValue, globalValue)}</span>
+          </div>
+          <div class="trait-map-scale">
+            <span class="scale-label low">Lower</span>
+            <span class="scale-label high">Higher</span>
+            <i class="trait-global-line" style="left:${globalLeft}%"></i>
+            <i class="trait-country-dot" style="left:${countryLeft}%" title="Country average ${format(countryValue)}"></i>
+            <i class="trait-persona-dot" style="left:${personaLeft}%" title="Persona ${format(personaValue)}"></i>
+          </div>
+          <div class="trait-map-values">
+            <span>Country ${format(countryValue)}</span>
+            <b>Persona ${format(personaValue)}</b>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+}
+
 function drawRadar(traits) {
+  renderTraitMapPlot(traits);
+  if (!els.radarCanvas) return;
   const canvas = els.radarCanvas;
   const ctx = canvas.getContext("2d");
   const w = canvas.width;
@@ -765,7 +788,7 @@ function drawRadar(traits) {
     ctx.lineTo(x, y);
     ctx.strokeStyle = "#edf2ef";
     ctx.stroke();
-    const label = radarLabel(key);
+    const label = traitLabel(key);
     ctx.fillStyle = "#42524b";
     ctx.textAlign = Math.cos(angle) > 0.2 ? "left" : Math.cos(angle) < -0.2 ? "right" : "center";
     const labelX = cx + Math.cos(angle) * (radius + 28);

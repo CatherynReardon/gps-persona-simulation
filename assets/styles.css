@@ -679,6 +679,113 @@ canvas {
   line-height: 1.45;
 }
 
+.trait-map-plot {
+  display: grid;
+  gap: 12px;
+}
+
+.trait-map-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.32fr) minmax(220px, 1fr) minmax(120px, 0.26fr);
+  gap: 12px;
+  align-items: center;
+  padding: 11px;
+  background: #f7faf8;
+  border: 1px solid #e0e9e4;
+  border-radius: 8px;
+}
+
+.trait-map-label b,
+.trait-map-label span,
+.trait-map-values span,
+.trait-map-values b {
+  display: block;
+}
+
+.trait-map-label b {
+  font-size: 0.86rem;
+}
+
+.trait-map-label span,
+.trait-map-values span {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.25;
+}
+
+.trait-map-values {
+  text-align: right;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.trait-map-values b {
+  margin-top: 3px;
+  color: var(--green);
+}
+
+.trait-map-scale {
+  position: relative;
+  height: 28px;
+  background:
+    linear-gradient(90deg, rgba(186, 74, 66, 0.14), rgba(237, 243, 239, 0.95) 50%, rgba(20, 120, 93, 0.16)),
+    #edf3ef;
+  border: 1px solid #d7e4dd;
+  border-radius: 99px;
+}
+
+.scale-label {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(58, 75, 68, 0.58);
+  font-size: 0.68rem;
+  font-weight: 800;
+  pointer-events: none;
+}
+
+.scale-label.low {
+  left: 9px;
+}
+
+.scale-label.high {
+  right: 9px;
+}
+
+.trait-global-line {
+  position: absolute;
+  top: -5px;
+  width: 2px;
+  height: 36px;
+  transform: translateX(-50%);
+  background: #87978f;
+  border-radius: 99px;
+}
+
+.trait-country-dot,
+.trait-persona-dot {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  transform: translate(-50%, -50%);
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(23, 33, 29, 0.12);
+}
+
+.trait-country-dot {
+  background: var(--blue);
+}
+
+.trait-persona-dot {
+  width: 16px;
+  height: 16px;
+  background: var(--green);
+  box-shadow: 0 0 0 3px rgba(20, 120, 93, 0.16);
+}
+
 .chart-key {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1900,6 +2007,7 @@ canvas {
   .decision-band,
   .persona-details,
   .chart-key,
+  .trait-map-row,
   .trait-bar,
   .reason-row,
   .team-cards,
@@ -1909,6 +2017,7 @@ canvas {
   }
 
   .trait-value,
+  .trait-map-values,
   .comparison-row span:last-child {
     text-align: left;
   }
