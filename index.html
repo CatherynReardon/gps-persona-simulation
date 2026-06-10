@@ -3,20 +3,20 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>GPS Persona Simulator</title>
-    <link rel="stylesheet" href="assets/styles.css?v=gps-three-layers" />
+    <title>GPS Student Role-Play Lab</title>
+    <link rel="stylesheet" href="assets/styles.css?v=student-simple" />
   </head>
   <body>
     <main class="app-shell">
       <aside class="control-panel" aria-label="Simulation controls">
         <div class="brand-block">
           <p class="eyebrow">Global Preferences Survey</p>
-          <h1>Persona Simulator</h1>
-          <p class="source-note">76 countries, 80k+ respondents, six behavioral preference measures.</p>
+          <h1>Student Role-Play Lab</h1>
+          <p class="source-note">Choose a country, meet a simulated persona, role-play a decision, and reflect on bias.</p>
         </div>
 
         <section class="panel-section">
-          <label for="countrySelect">Country</label>
+          <label for="countrySelect">1. Choose a country</label>
           <select id="countrySelect"></select>
         </section>
 
@@ -37,14 +37,14 @@
 
         <section class="panel-section">
           <div class="section-head">
-            <h2>Trait Overrides</h2>
+            <h2>Advanced trait sliders</h2>
             <button id="resetTraits" class="reset-button" type="button">Reset</button>
           </div>
           <div id="traitControls" class="trait-controls"></div>
         </section>
 
         <section class="panel-section">
-          <label for="scenarioSelect">Scenario</label>
+          <label for="scenarioSelect">2. Pick a role-play scenario</label>
           <select id="scenarioSelect">
             <option value="investment">Risky investment</option>
             <option value="delay">Delayed reward</option>
@@ -57,7 +57,7 @@
 
         <section class="panel-section two-col">
           <div>
-            <label for="cohortSize">Global cohort</label>
+            <label for="cohortSize">Group size</label>
             <select id="cohortSize">
               <option value="12">12 people</option>
               <option value="18" selected>18 people</option>
@@ -65,7 +65,7 @@
             </select>
           </div>
           <div>
-            <label for="interactionMode">Mode</label>
+            <label for="interactionMode">Interaction type</label>
             <select id="interactionMode">
               <option value="mixed">Mixed</option>
               <option value="trust">Trust</option>
@@ -76,7 +76,7 @@
         </section>
 
         <section class="panel-section">
-          <label for="sceneSetting">Real-life setting</label>
+          <label for="sceneSetting">3. Choose a setting</label>
           <select id="sceneSetting">
             <option value="campus">Campus commons</option>
             <option value="market">Market negotiation</option>
@@ -86,15 +86,15 @@
         </section>
 
         <section class="panel-section">
-          <button id="generatePersona" class="primary-button" type="button">Generate Persona</button>
+          <button id="generatePersona" class="primary-button" type="button">Generate New Persona</button>
         </section>
 
         <section class="panel-section">
-          <button id="startClassroom" class="secondary-button" type="button">Start Classroom Mode</button>
+          <button id="startClassroom" class="secondary-button" type="button">Go to Role-Play Activity</button>
         </section>
 
         <section class="panel-section">
-          <button id="startResearch" class="secondary-button" type="button">Start Research Mode</button>
+          <button id="startResearch" class="secondary-button" type="button">Go to Student Research</button>
         </section>
 
         <section class="panel-section">
@@ -105,7 +105,7 @@
       <section class="workspace">
         <header class="workspace-top">
           <div>
-            <p class="eyebrow">GPS Behavioral Preferences Lab</p>
+            <p class="eyebrow">GPS Student Role-Play Lab</p>
             <h2 id="personaName">Loading dataset...</h2>
           </div>
           <div class="metric-strip" aria-label="Dataset metrics">
@@ -124,13 +124,38 @@
           </div>
         </header>
 
+        <section class="student-guide" aria-labelledby="studentGuideTitle">
+          <div>
+            <p class="eyebrow">Start Here</p>
+            <h3 id="studentGuideTitle">What students do in this lab</h3>
+          </div>
+          <div class="student-steps">
+            <article>
+              <b>1. Meet the persona</b>
+              <p>Use the country, age, and gender filters to generate a simulated role.</p>
+            </article>
+            <article>
+              <b>2. Read the clues</b>
+              <p>Look for the strongest GPS traits. Treat them as clues, not facts about all people.</p>
+            </article>
+            <article>
+              <b>3. Role-play a choice</b>
+              <p>Decide what the persona might do in the scenario and explain which trait shaped it.</p>
+            </article>
+            <article>
+              <b>4. Reflect on bias</b>
+              <p>Ask what assumption you made and how the model could be misused.</p>
+            </article>
+          </div>
+        </section>
+
         <section class="dashboard-section" aria-labelledby="dashboardTitle">
           <div class="section-head">
             <div>
-              <h3 id="dashboardTitle">Layer 1: Data Dashboard</h3>
-              <p class="microcopy">Read the six GPS preference traits before entering the role-play. The goal is interpretation, not prediction.</p>
+              <h3 id="dashboardTitle">Step 1: Look at the Data Clues</h3>
+              <p class="microcopy">These six traits help students form evidence-based questions before role-play begins.</p>
             </div>
-            <span class="pill">GPS foundation</span>
+            <span class="pill">Not a prediction</span>
           </div>
           <div class="dashboard-summary">
             <article class="dashboard-stat">
@@ -150,15 +175,13 @@
             </article>
           </div>
           <div id="dashboardTraitGrid" class="dashboard-trait-grid"></div>
-          <div class="interpretation-note">
-            Use this dashboard to ask how data, culture, individual variation, and bias shape interpretation. It should not be used to claim what a real person from a country will do.
-          </div>
+          <div class="interpretation-note">Student reminder: a trait score is a clue for discussion. It is not a rule about a person or a country.</div>
         </section>
 
         <div class="layer-heading">
           <div>
-            <h3>Layer 2: Persona Cards</h3>
-            <p class="microcopy">The generated persona combines country context, age and gender filters, trait evidence, and uncertainty notes.</p>
+            <h3>Step 2: Meet the Persona</h3>
+            <p class="microcopy">Use this card to prepare your role. Stay in character, but avoid stereotypes.</p>
           </div>
         </div>
 
@@ -205,7 +228,7 @@
 
           <section class="scenario-panel">
             <div class="section-head">
-              <h3>Layer 3: Simulation + Reflection</h3>
+              <h3>Step 3: Role-Play + Reflect</h3>
               <span id="scenarioTag" class="pill">investment</span>
             </div>
             <div id="scenarioText" class="scenario-text"></div>
@@ -214,8 +237,8 @@
 
         <section class="comparison-section">
           <div class="section-head">
-            <h3>Country Comparison</h3>
-            <span class="muted">top and bottom country means for selected scenario driver</span>
+            <h3>Extra Data View</h3>
+            <span class="muted">optional comparison for the selected scenario trait</span>
           </div>
           <div id="comparisonRows" class="comparison-rows"></div>
         </section>
@@ -223,8 +246,8 @@
         <section class="global-section">
           <div class="section-head">
             <div>
-              <h3>Global Interaction Field</h3>
-              <p class="microcopy">A live cohort of simulated respondents encountering one another across borders.</p>
+              <h3>Optional Global Scene</h3>
+              <p class="microcopy">Use this after students understand one persona and are ready to compare interactions.</p>
             </div>
             <button id="runGlobalRound" class="small-action" type="button">New Round</button>
           </div>
@@ -246,8 +269,8 @@
         <section class="scene-section">
           <div class="section-head">
             <div>
-              <h3>Live Role-Play Scene</h3>
-              <p class="microcopy">Watch sampled personas move through a setting, approach each other, and react to encounters.</p>
+              <h3>Role-Play Scene</h3>
+              <p class="microcopy">Watch simulated personas move through a setting and respond to encounters.</p>
             </div>
             <div class="scene-actions">
               <button id="pauseScene" class="mini-button" type="button">Pause</button>
@@ -262,8 +285,8 @@
         <section class="classroom-section" id="classroomSection">
           <div class="section-head">
             <div>
-              <h3>Classroom Mode</h3>
-              <p class="microcopy">Turn the simulation into a guided role-play activity with missions, rounds, and reflection.</p>
+              <h3>Student Role-Play Activity</h3>
+              <p class="microcopy">Use this section when students are ready to perform, discuss, and debrief.</p>
             </div>
             <button id="advanceRound" class="small-action" type="button">Advance Round</button>
           </div>
@@ -317,8 +340,8 @@
         <section class="research-section" id="researchSection">
           <div class="section-head">
             <div>
-              <h3>Research Mode</h3>
-              <p class="microcopy">Run a structured study on how participants interpret country labels, traits, and observed behavior.</p>
+              <h3>Student Research Activity</h3>
+              <p class="microcopy">Use a short trial study to see how information changes student judgments.</p>
             </div>
             <div class="scene-actions">
               <button id="newParticipant" class="mini-button" type="button">New Participant</button>
@@ -327,31 +350,31 @@
           </div>
 
           <article class="research-directions">
-            <span class="card-label">How to Conduct the Study</span>
+            <span class="card-label">Student Research Steps</span>
             <div class="research-steps">
               <div>
-                <b>1. Assign an anonymous ID</b>
-                <p>Use a classroom code such as anonymous-001. Do not enter student names.</p>
+                <b>1. Set up</b>
+                <p>Use an anonymous classroom ID and choose one research question.</p>
               </div>
               <div>
-                <b>2. Choose a research question</b>
-                <p>Decide whether the study is testing country labels, trait profiles, trust revision, or stereotype awareness.</p>
+                <b>2. Begin</b>
+                <p>The app creates a trial and decides what information the participant sees.</p>
               </div>
               <div>
-                <b>3. Begin the study</b>
-                <p>The simulator randomly assigns a condition, such as showing country, hiding country, showing traits, or showing behavior only.</p>
+                <b>3. Record</b>
+                <p>Choose a response, rate confidence and trust, and write one sentence explaining why.</p>
               </div>
               <div>
-                <b>4. Run each trial</b>
-                <p>Read the persona and scenario, record the participant choice, confidence, trust rating, and reasoning note.</p>
+                <b>4. Repeat</b>
+                <p>Run several trials so students can compare patterns across conditions.</p>
               </div>
               <div>
-                <b>5. Repeat and debrief</b>
-                <p>Use Next Trial for more observations, then discuss how assumptions changed when data was shown or hidden.</p>
+                <b>5. Debrief</b>
+                <p>Discuss what changed when country labels, traits, or behavior were shown or hidden.</p>
               </div>
               <div>
-                <b>6. Export the data</b>
-                <p>Download the CSV and compare responses across conditions, not across real people or national groups.</p>
+                <b>6. Export</b>
+                <p>Download the CSV and analyze class responses without using names.</p>
               </div>
             </div>
             <div class="research-warning">
@@ -363,7 +386,7 @@
           <div class="research-grid">
             <article class="research-card consent-card">
               <span class="card-label">Study Setup</span>
-              <p class="setup-help">Click Begin Study after entering an anonymous participant ID. The app will create Trial 1 and assign what information the participant sees.</p>
+              <p class="setup-help">Enter an anonymous ID, choose a question, then click Begin Study. The app will create Trial 1.</p>
               <label for="participantId">Participant ID</label>
               <input id="participantId" type="text" placeholder="anonymous-001" />
               <label for="studyQuestion">Research question</label>
@@ -431,6 +454,6 @@
       </section>
     </main>
 
-    <script src="assets/app.js?v=gps-three-layers"></script>
+    <script src="assets/app.js?v=student-simple"></script>
   </body>
 </html>

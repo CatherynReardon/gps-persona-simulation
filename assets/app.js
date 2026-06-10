@@ -50,8 +50,8 @@ const missions = [
 
 const classroomRounds = [
   {
-    title: "Round 1: Adopt the persona",
-    instruction: "Each student group receives a role card. Name the persona, read the top traits, and decide how the persona talks, negotiates, and reacts under pressure.",
+    title: "Round 1: Meet the persona",
+    instruction: "Each group receives a role card. Read the top traits and decide how the persona might speak, negotiate, and react.",
     prompts: [
       "What does this persona want from the mission?",
       "Which trait should shape their first decision?",
@@ -59,8 +59,8 @@ const classroomRounds = [
     ],
   },
   {
-    title: "Round 2: Make the first move",
-    instruction: "Run a global interaction round. Groups role-play the feed entry that involves their persona or choose a related pair to perform.",
+    title: "Round 2: Make a choice",
+    instruction: "Role-play one scenario. The group must explain which trait clue shaped the persona's choice.",
     prompts: [
       "What does your persona say first?",
       "Does the model predict trust, caution, or conflict?",
@@ -69,7 +69,7 @@ const classroomRounds = [
   },
   {
     title: "Round 3: Add pressure",
-    instruction: "Introduce a surprise complication: scarce resources, a broken promise, public scrutiny, or a tempting risky opportunity.",
+    instruction: "Add one complication: scarce resources, a broken promise, public scrutiny, or a tempting risky opportunity.",
     prompts: [
       "Which slider would change under this pressure?",
       "Would the persona cooperate, delay, retaliate, or ask for safeguards?",
@@ -77,8 +77,8 @@ const classroomRounds = [
     ],
   },
   {
-    title: "Round 4: Negotiate",
-    instruction: "Groups negotiate a final agreement while staying in character. They must cite at least two GPS traits before committing.",
+    title: "Round 4: Discuss",
+    instruction: "Groups compare choices while staying in character. Each group must cite at least two GPS traits.",
     prompts: [
       "What concession can your persona make?",
       "What condition would your persona require?",
@@ -86,8 +86,8 @@ const classroomRounds = [
     ],
   },
   {
-    title: "Round 5: Debrief the model",
-    instruction: "Step out of character. Evaluate what the simulation captured well and where it could mislead.",
+    title: "Round 5: Debrief",
+    instruction: "Step out of character. Discuss what the simulation helped you see and where it could mislead.",
     prompts: [
       "Where did the data help you reason?",
       "Where could this become a stereotype?",
@@ -796,32 +796,32 @@ function renderScenario(traits) {
 
   els.scenarioText.innerHTML = `
     <div class="reason-row">
-      <b>Setup</b>
+      <b>Situation</b>
       <p>${model.prompt}</p>
     </div>
     <div class="reason-row">
-      <b>Choice</b>
-      <p>The model estimates a ${pct(probability)} chance that this persona ${decision.toLowerCase()}.</p>
+      <b>Persona choice</b>
+      <p>This persona would likely choose: <strong>${decision}</strong>. Use this as a role-play prompt, not a guaranteed prediction.</p>
     </div>
     <div class="reason-row">
-      <b>Main trait</b>
-      <p>${traitLabel(model.driver)} is the scenario driver. This profile scores ${format(driverValue)}, ${driverDirection} (${driverDelta >= 0 ? "+" : ""}${format(driverDelta)} from the global baseline).</p>
+      <b>Trait clue</b>
+      <p>${traitLabel(model.driver)} is the main clue. This profile is ${driverDirection} (${driverDelta >= 0 ? "+" : ""}${format(driverDelta)} from the global baseline).</p>
     </div>
     <div class="reason-row">
-      <b>Drivers</b>
+      <b>Evidence</b>
       <p>${strongest
         .map(({ trait, contribution }) => {
           const label = traitLabel(trait).toLowerCase();
-          return `${label} ${contribution >= 0 ? "raises" : "lowers"} the score`;
+          return `${label} ${contribution >= 0 ? "supports" : "complicates"} the choice`;
         })
         .join("; ")}.</p>
     </div>
     <div class="reason-row prompt-row">
-      <b>Metacognition</b>
+      <b>Think</b>
       <p>What assumption did you make before seeing the trait data?</p>
     </div>
     <div class="reason-row prompt-row ethics-row">
-      <b>Ethics</b>
+      <b>Ethics check</b>
       <p>How could this type of model be misused?</p>
     </div>
   `;
@@ -1574,27 +1574,27 @@ function renderPersona() {
   els.avatar.innerHTML = `<img alt="" src="${avatarSvg({ ...person, isocode: country.isocode }, 128)}">`;
   els.countryIso.textContent = country.isocode;
   els.sampleSize.textContent = country.n.toLocaleString();
-  els.personaNarrative.textContent = `This simulated respondent is ${phraseOne} and ${phraseTwo}. The role is anchored in a sampled GPS record, then interpreted through editable standardized preference scores.`;
+  els.personaNarrative.textContent = `Role-play this persona as someone who is ${phraseOne} and ${phraseTwo}. Remember: the traits are clues for discussion, not a complete identity.`;
   els.personaDetails.innerHTML = `
     <div class="persona-detail-row">
-      <b>Country context</b>
+      <b>Country clue</b>
       <p>${country.country} (${country.isocode}), country sample n=${country.n.toLocaleString()}.</p>
     </div>
     <div class="persona-detail-row">
-      <b>Age and gender filter</b>
+      <b>Persona filter</b>
       <p>${age}-year-old ${gender}; change the sidebar filters to sample a different role.</p>
     </div>
     <div class="persona-detail-row wide">
-      <b>Six-trait profile</b>
+      <b>Trait clues</b>
       <div class="trait-tags">${traitProfile}</div>
     </div>
     <div class="persona-detail-row">
-      <b>Likely decision pattern</b>
-      <p>${likelyPattern} in the selected scenario, with ${traitLabel(model.driver).toLowerCase()} carrying much of the interpretation.</p>
+      <b>Likely choice</b>
+      <p>${likelyPattern} in the selected scenario. The biggest clue is ${traitLabel(model.driver).toLowerCase()}.</p>
     </div>
   `;
-  els.personaUncertainty.textContent = "This persona is simulated from population-level preference patterns and should not be interpreted as representing all people from this country. Individual differences remain central.";
-  els.personaReflection.innerHTML = `<b>Reflection prompt</b><p>Before role-playing, name one assumption you might make from the country label alone and one piece of trait evidence that complicates it.</p>`;
+  els.personaUncertainty.textContent = "Important: this simulated persona does not represent everyone from this country. Real people vary widely.";
+  els.personaReflection.innerHTML = `<b>Student prompt</b><p>Name one assumption you had at first. Then name one trait clue that made your thinking more careful.</p>`;
 
   renderDashboard(traits);
   renderControls();
