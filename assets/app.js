@@ -318,6 +318,15 @@ const traitDisplayLabels = {
   negrecip: "Negative reciprocity",
 };
 
+const radarDisplayLabels = {
+  patience: "Time",
+  risktaking: "Risk",
+  trust: "Trust",
+  altruism: "Altruism",
+  posrecip: "Positive\nreciprocity",
+  negrecip: "Negative\nreciprocity",
+};
+
 const geo = {
   AFG: [66, 34], DZA: [2, 28], ARG: [-64, -34], AUS: [134, -25], AUT: [14, 47],
   BGD: [90, 24], BOL: [-64, -17], BIH: [18, 44], BWA: [24, -22], BRA: [-52, -10],
@@ -351,6 +360,10 @@ function format(value) {
 
 function traitLabel(key) {
   return traitDisplayLabels[key] ?? state.data?.traits?.find((trait) => trait.key === key)?.label ?? key;
+}
+
+function radarLabel(key) {
+  return radarDisplayLabels[key] ?? traitLabel(key);
 }
 
 function globalComparisonText(value, globalValue = 0) {
@@ -752,10 +765,14 @@ function drawRadar(traits) {
     ctx.lineTo(x, y);
     ctx.strokeStyle = "#edf2ef";
     ctx.stroke();
-    const label = traitLabel(key);
+    const label = radarLabel(key);
     ctx.fillStyle = "#42524b";
     ctx.textAlign = Math.cos(angle) > 0.2 ? "left" : Math.cos(angle) < -0.2 ? "right" : "center";
-    ctx.fillText(label, cx + Math.cos(angle) * (radius + 24), cy + Math.sin(angle) * (radius + 24));
+    const labelX = cx + Math.cos(angle) * (radius + 28);
+    const labelY = cy + Math.sin(angle) * (radius + 24);
+    label.split("\n").forEach((line, lineIndex, lines) => {
+      ctx.fillText(line, labelX, labelY + (lineIndex - (lines.length - 1) / 2) * 15);
+    });
   });
 
   ctx.beginPath();
