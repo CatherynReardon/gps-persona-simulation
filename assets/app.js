@@ -1352,40 +1352,43 @@ function roleCardQuestion(person) {
 }
 
 function renderTeamCards() {
-  const people = state.globalPeople.slice(0, Math.min(8, state.globalPeople.length));
-  els.teamCards.innerHTML = people
-    .map((person, index) => {
-      const age = Math.round(person.age ?? 35);
-      const gender = person.gender === 1 ? "male" : person.gender === 2 ? "female" : "respondent";
-      const tags = topTraitTags(person).map((tag) => `<span class="trait-tag">${tag}</span>`).join("");
-      const firstMove = roleCardMove(person);
-      const discussionQuestion = roleCardQuestion(person);
-      return `
-        <article class="student-card">
-          <div class="student-card-top">
-            ${avatarHtml(person)}
-            <div>
-              <span class="card-label">Student ${index + 1} role</span>
-              <h5>${person.country}</h5>
-              <p>${age}-year-old ${gender}${person.region ? ` from ${person.region}` : ""}</p>
-            </div>
-          </div>
-          <div class="role-card-section">
-            <b>Trait evidence</b>
-            <div class="trait-tags">${tags}</div>
-          </div>
-          <div class="role-card-section">
-            <b>First move</b>
-            <p>${firstMove}</p>
-          </div>
-          <div class="role-card-section">
-            <b>Debrief question</b>
-            <p>${discussionQuestion}</p>
-          </div>
-        </article>
-      `;
-    })
-    .join("");
+  const country = state.country;
+  const source = state.persona ?? {};
+  const person = {
+    ...source,
+    country: country.country,
+    isocode: country.isocode,
+    traits: activeTraits(),
+  };
+  const age = Math.round(person.age ?? country.demographics.ageMedian ?? 35);
+  const gender = person.gender === 1 ? "male" : person.gender === 2 ? "female" : "respondent";
+  const tags = topTraitTags(person).map((tag) => `<span class="trait-tag">${tag}</span>`).join("");
+  const firstMove = roleCardMove(person);
+  const discussionQuestion = roleCardQuestion(person);
+  els.teamCards.innerHTML = `
+    <article class="student-card single-role-card">
+      <div class="student-card-top">
+        ${avatarHtml(person)}
+        <div>
+          <span class="card-label">Selected simulation role</span>
+          <h5>${person.country}</h5>
+          <p>${age}-year-old ${gender}${person.region ? ` from ${person.region}` : ""}</p>
+        </div>
+      </div>
+      <div class="role-card-section">
+        <b>Trait evidence</b>
+        <div class="trait-tags">${tags}</div>
+      </div>
+      <div class="role-card-section">
+        <b>First move</b>
+        <p>${firstMove}</p>
+      </div>
+      <div class="role-card-section">
+        <b>Debrief question</b>
+        <p>${discussionQuestion}</p>
+      </div>
+    </article>
+  `;
 }
 
 function renderMission() {
@@ -1767,11 +1770,13 @@ async function init() {
     state.missionIndex = (state.missionIndex + 1) % missions.length;
     renderClassroomMode();
   });
-  els.assignTeams.addEventListener("click", () => {
-    createGlobalCohort();
-    runGlobalRound();
-    renderClassroomMode();
-  });
+  if (els.assignTeams) {
+    els.assignTeams.addEventListener("click", () => {
+      createGlobalCohort();
+      runGlobalRound();
+      renderClassroomMode();
+    });
+  }
   els.clearHistory.addEventListener("click", () => {
     state.history = [];
     renderHistory();

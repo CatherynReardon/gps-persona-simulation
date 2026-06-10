@@ -1156,7 +1156,7 @@ canvas {
 
 .team-cards {
   display: grid;
-  grid-template-columns: repeat(2, minmax(240px, 1fr));
+  grid-template-columns: 1fr;
   gap: 12px;
 }
 
@@ -1168,6 +1168,10 @@ canvas {
   background: #f8fbf9;
   border: 1px solid #e0e9e4;
   border-radius: 8px;
+}
+
+.single-role-card {
+  max-width: 760px;
 }
 
 .role-card-help {
