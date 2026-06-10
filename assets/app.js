@@ -28,7 +28,7 @@ const state = {
 const missions = [
   {
     title: "Global Partnership Challenge",
-    text: "Teams must form a cross-border partnership to solve a shared problem. Success depends on trust, reciprocity, and how much risk each persona will accept.",
+    text: "Each student role must decide whether to join a cross-border partnership to solve a shared problem. Success depends on trust, reciprocity, and how much risk the persona will accept.",
   },
   {
     title: "Disaster Aid Allocation",
@@ -51,7 +51,7 @@ const missions = [
 const classroomRounds = [
   {
     title: "Round 1: Meet the persona",
-    instruction: "Each group receives a role card. Read the top traits and decide how the persona might speak, negotiate, and react.",
+    instruction: "Each student receives one role card. Read the top traits and decide how the persona might speak, negotiate, and react.",
     prompts: [
       "What does this persona want from the mission?",
       "Which trait should shape their first decision?",
@@ -60,7 +60,7 @@ const classroomRounds = [
   },
   {
     title: "Round 2: Make a choice",
-    instruction: "Role-play one scenario. The group must explain which trait clue shaped the persona's choice.",
+    instruction: "Role-play one scenario individually. Each student explains which trait clue shaped the persona's choice.",
     prompts: [
       "What does your persona say first?",
       "Does the model predict trust, caution, or conflict?",
@@ -78,7 +78,7 @@ const classroomRounds = [
   },
   {
     title: "Round 4: Discuss",
-    instruction: "Groups compare choices while staying in character. Each group must cite at least two GPS traits.",
+    instruction: "Students compare choices while staying in character. Each student must cite at least two GPS traits.",
     prompts: [
       "What concession can your persona make?",
       "What condition would your persona require?",
@@ -1338,7 +1338,7 @@ function roleCardMove(person) {
   if (risk > 0.45) return "Suggest a bold option, but explain what payoff makes the risk worth it.";
   if (patience > 0.45) return "Argue for waiting, planning, or choosing a larger delayed benefit.";
   if (altruism > 0.45) return "Offer help early, especially if the need is concrete and credible.";
-  if (negrecip > 0.45) return "Push back if another group acts unfairly, and explain the fairness concern.";
+  if (negrecip > 0.45) return "Push back if another role acts unfairly, and explain the fairness concern.";
   return "Start with a balanced offer and ask one question before deciding.";
 }
 
@@ -1365,7 +1365,7 @@ function renderTeamCards() {
           <div class="student-card-top">
             ${avatarHtml(person)}
             <div>
-              <span class="card-label">Team ${index + 1} role</span>
+              <span class="card-label">Student ${index + 1} role</span>
               <h5>${person.country}</h5>
               <p>${age}-year-old ${gender}${person.region ? ` from ${person.region}` : ""}</p>
             </div>
@@ -1436,7 +1436,7 @@ function summarizeRound() {
   const cooperative = state.interactions.filter((event) => event.cooperative).length;
   const conflict = state.interactions.filter((event) => event.tone === "conflict").length;
   const caution = state.interactions.filter((event) => event.tone === "caution").length;
-  return `${state.interactions.length} encounters: ${cooperative} cooperative, ${caution} cautious, ${conflict} conflict-heavy. Students should defend or challenge one outcome using trait evidence.`;
+  return `${state.interactions.length} encounters: ${cooperative} cooperative, ${caution} cautious, ${conflict} conflict-heavy. Each student should defend or challenge one outcome using trait evidence.`;
 }
 
 function advanceClassroomRound() {
