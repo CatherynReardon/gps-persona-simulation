@@ -1554,8 +1554,7 @@ function renderResearchMode() {
 }
 
 function beginResearchStudy() {
-  const participantId = els.participantId.value.trim() || `anon-${Date.now().toString().slice(-6)}`;
-  els.participantId.value = participantId;
+  const participantId = `simulation-${Date.now().toString().slice(-6)}`;
   const condition = randomCondition();
   state.research = {
     participantId,
@@ -1782,7 +1781,6 @@ async function init() {
     renderHistory();
   });
   els.newParticipant.addEventListener("click", () => {
-    els.participantId.value = `anon-${Date.now().toString().slice(-6)}`;
     state.research.condition = "not_started";
     state.research.trialIndex = 0;
     state.research.currentTrial = null;
