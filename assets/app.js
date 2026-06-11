@@ -22,8 +22,36 @@ const state = {
     logs: [],
     startedAt: null,
   },
+  studyStep: 0,
   history: [],
 };
+
+const studySteps = [
+  {
+    title: "Step 1: Ask a research question",
+    instruction: "Choose the question you are studying. For example: Do trait profiles change how students interpret a persona's decision?",
+  },
+  {
+    title: "Step 2: Form a hypothesis",
+    instruction: "Write a prediction before recording the trial. A hypothesis should connect a trait variable to a possible behavior.",
+  },
+  {
+    title: "Step 3: Analyze the trait data",
+    instruction: "Use the trait evidence plot and persona card. Identify which psychological variable seems most relevant.",
+  },
+  {
+    title: "Step 4: Observe the simulated decision",
+    instruction: "Run or read the trial, choose the student interpretation, and write what happened in plain language.",
+  },
+  {
+    title: "Step 5: Interpret the evidence",
+    instruction: "Explain whether the observation supports, challenges, or complicates the original hypothesis.",
+  },
+  {
+    title: "Step 6: Evaluate bias and limits",
+    instruction: "Name what the simulation cannot prove. Consider stereotypes, missing context, and individual variation.",
+  },
+];
 
 const missions = [
   {
@@ -147,31 +175,31 @@ const trialScenarios = [
   {
     key: "trust_transfer",
     title: "Trust Transfer",
-    text: "The participant decides whether to trust this persona with shared resources before receiving proof that they will reciprocate.",
+    text: "The student decides whether the persona would trust someone with shared resources before receiving proof that they will reciprocate.",
     scenario: "trust",
   },
   {
     key: "aid_donation",
     title: "Aid Donation",
-    text: "The participant decides whether this persona is likely to support a credible aid request with no direct personal return.",
+    text: "The student decides whether the persona is likely to support a credible aid request with no direct personal return.",
     scenario: "donation",
   },
   {
     key: "risky_project",
     title: "Risky Project",
-    text: "The participant decides whether this persona would join a high-upside project with uncertain results.",
+    text: "The student decides whether the persona would join a high-upside project with uncertain results.",
     scenario: "investment",
   },
   {
     key: "delayed_reward",
     title: "Delayed Reward",
-    text: "The participant decides whether this persona would wait for a larger future reward instead of taking less now.",
+    text: "The student decides whether the persona would wait for a larger future reward instead of taking less now.",
     scenario: "delay",
   },
   {
     key: "unfair_partner",
     title: "Unfair Partner",
-    text: "The participant decides whether this persona would punish an unfair partner even if punishment has a cost.",
+    text: "The student decides whether the persona would punish an unfair partner even if punishment has a cost.",
     scenario: "conflict",
   },
 ];
@@ -294,6 +322,12 @@ const els = {
   exportResearch: document.querySelector("#exportResearch"),
   participantId: document.querySelector("#participantId"),
   studyQuestion: document.querySelector("#studyQuestion"),
+  studyStepTitle: document.querySelector("#studyStepTitle"),
+  studyStepBadge: document.querySelector("#studyStepBadge"),
+  studyStepTrack: document.querySelector("#studyStepTrack"),
+  studyStepInstruction: document.querySelector("#studyStepInstruction"),
+  prevStudyStep: document.querySelector("#prevStudyStep"),
+  nextStudyStep: document.querySelector("#nextStudyStep"),
   beginStudy: document.querySelector("#beginStudy"),
   conditionBadge: document.querySelector("#conditionBadge"),
   trialTitle: document.querySelector("#trialTitle"),
@@ -1463,6 +1497,26 @@ function randomCondition() {
   return researchConditions[Math.floor(Math.random() * researchConditions.length)];
 }
 
+function renderStudyStepper() {
+  if (!els.studyStepTitle || !els.studyStepTrack) return;
+  const step = studySteps[state.studyStep] ?? studySteps[0];
+  els.studyStepTitle.textContent = step.title;
+  els.studyStepBadge.textContent = `${state.studyStep + 1} of ${studySteps.length}`;
+  els.studyStepInstruction.textContent = step.instruction;
+  els.studyStepTrack.innerHTML = studySteps
+    .map(
+      (item, index) => `
+        <button class="study-step-dot ${index === state.studyStep ? "active" : ""} ${index < state.studyStep ? "complete" : ""}" data-step="${index}" type="button">
+          <span>${index + 1}</span>
+          <b>${item.title.replace(/^Step \d+: /, "")}</b>
+        </button>
+      `,
+    )
+    .join("");
+  els.prevStudyStep.disabled = state.studyStep === 0;
+  els.nextStudyStep.textContent = state.studyStep === studySteps.length - 1 ? "Restart Study Steps" : "Next Study Step";
+}
+
 function buildResearchTrial() {
   const country = state.data.countries[Math.floor(Math.random() * state.data.countries.length)];
   const person = samplePersonFromCountry(country);
@@ -1548,6 +1602,7 @@ function renderDebriefPrompts() {
 }
 
 function renderResearchMode() {
+  renderStudyStepper();
   renderResearchTrial();
   renderResearchLog();
   renderDebriefPrompts();
@@ -1785,6 +1840,20 @@ async function init() {
     state.research.trialIndex = 0;
     state.research.currentTrial = null;
     renderResearchMode();
+  });
+  els.prevStudyStep.addEventListener("click", () => {
+    state.studyStep = Math.max(0, state.studyStep - 1);
+    renderStudyStepper();
+  });
+  els.nextStudyStep.addEventListener("click", () => {
+    state.studyStep = state.studyStep === studySteps.length - 1 ? 0 : state.studyStep + 1;
+    renderStudyStepper();
+  });
+  els.studyStepTrack.addEventListener("click", (event) => {
+    const step = event.target.closest?.("[data-step]")?.dataset?.step;
+    if (step === undefined) return;
+    state.studyStep = Number(step);
+    renderStudyStepper();
   });
   els.beginStudy.addEventListener("click", beginResearchStudy);
   els.nextTrial.addEventListener("click", nextResearchTrial);

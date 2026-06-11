@@ -369,11 +369,11 @@
         <section class="research-section" id="researchSection">
           <div class="section-head">
             <div>
-              <h3>Student Research Activity</h3>
-              <p class="microcopy">Use a short trial study to see how information changes student judgments.</p>
+              <h3>Guided Psychology Study Simulation</h3>
+              <p class="microcopy">Move through the steps of a psychology study: ask, predict, analyze, observe, interpret, and evaluate limits.</p>
             </div>
             <div class="scene-actions">
-              <button id="newParticipant" class="mini-button" type="button">New Participant</button>
+              <button id="newParticipant" class="mini-button" type="button">Reset Trial</button>
             </div>
           </div>
 
@@ -381,33 +381,61 @@
             <span class="card-label">Student Research Steps</span>
             <div class="research-steps">
               <div>
-                <b>1. Set up</b>
+                <b>1. Ask</b>
                 <p>Choose one research question for the simulation trial.</p>
               </div>
               <div>
-                <b>2. Begin</b>
-                <p>The app creates a trial and decides what information the participant sees.</p>
+                <b>2. Predict</b>
+                <p>Write a hypothesis before interpreting the outcome.</p>
               </div>
               <div>
-                <b>3. Record</b>
-                <p>Choose a response, rate confidence and trust, and write one sentence explaining why.</p>
+                <b>3. Analyze</b>
+                <p>Use trait data as psychological evidence.</p>
               </div>
               <div>
-                <b>4. Repeat</b>
-                <p>Run several trials so students can compare patterns across conditions.</p>
+                <b>4. Observe</b>
+                <p>Run the simulated trial and record the choice.</p>
               </div>
               <div>
-                <b>5. Debrief</b>
-                <p>Discuss what changed when country labels, traits, or behavior were shown or hidden.</p>
+                <b>5. Interpret</b>
+                <p>Explain whether the evidence supports or challenges the hypothesis.</p>
               </div>
               <div>
-                <b>6. Connect to psychology</b>
+                <b>6. Evaluate</b>
                 <p>Discuss how evidence, bias, and individual variation shaped the interpretation.</p>
               </div>
             </div>
             <div class="research-warning">
               <b>Teacher note</b>
               <p>This is a classroom simulation for learning about bias, interpretation, and research design. Students should not export data from this activity. Any formal human-subjects study or instructor-led data collection would need institutional approval before collecting identifiable or sensitive data.</p>
+            </div>
+          </article>
+
+          <article class="study-stepper" aria-label="Guided study notebook">
+            <div class="section-head compact">
+              <div>
+                <span class="card-label">Guided Study Notebook</span>
+                <h4 id="studyStepTitle">Step 1: Ask a research question</h4>
+              </div>
+              <span id="studyStepBadge" class="pill">1 of 6</span>
+            </div>
+            <div id="studyStepTrack" class="study-step-track" aria-label="Study steps"></div>
+            <p id="studyStepInstruction" class="study-step-instruction"></p>
+            <div class="study-notebook-grid">
+              <label for="hypothesisNote">Hypothesis</label>
+              <textarea id="hypothesisNote" rows="3" placeholder="I predict the persona will... because..."></textarea>
+              <label for="dataNote">Trait evidence</label>
+              <textarea id="dataNote" rows="3" placeholder="The strongest trait evidence is..."></textarea>
+              <label for="observationNote">Observation</label>
+              <textarea id="observationNote" rows="3" placeholder="In the simulated trial, the persona..."></textarea>
+              <label for="interpretationNote">Interpretation</label>
+              <textarea id="interpretationNote" rows="3" placeholder="This supports/challenges my hypothesis because..."></textarea>
+              <label for="limitsNote">Bias and limits</label>
+              <textarea id="limitsNote" rows="3" placeholder="This interpretation could be limited by..."></textarea>
+            </div>
+            <div class="mission-actions">
+              <button id="prevStudyStep" class="mini-button" type="button">Previous Step</button>
+              <button id="nextStudyStep" class="small-action" type="button">Next Study Step</button>
             </div>
           </article>
 
@@ -437,7 +465,7 @@
               <p id="trialScenario"></p>
               <div id="trialPersona" class="trial-persona"></div>
               <div class="response-grid">
-                <label for="choiceSelect">Participant choice</label>
+                <label for="choiceSelect">Student interpretation</label>
                 <select id="choiceSelect">
                   <option value="">Select response</option>
                   <option value="cooperate">Cooperate / trust</option>
@@ -450,7 +478,7 @@
                 <label for="trustRating">Trust rating</label>
                 <input id="trustRating" type="range" min="0" max="100" value="50" />
                 <label for="reasonText">Reasoning note</label>
-                <textarea id="reasonText" rows="4" placeholder="What information did the participant use?"></textarea>
+                <textarea id="reasonText" rows="4" placeholder="What information did you use to make this interpretation?"></textarea>
               </div>
               <div class="mission-actions">
                 <button id="recordTrial" class="small-action" type="button">Record Trial</button>

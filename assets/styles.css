@@ -1014,6 +1014,84 @@ canvas {
   border-radius: 8px;
 }
 
+.study-stepper {
+  margin-bottom: 18px;
+  padding: 18px;
+  background: #fff;
+  border: 1px solid #dce8e2;
+  border-radius: 8px;
+  box-shadow: var(--soft-shadow);
+}
+
+.study-step-track {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.study-step-dot {
+  min-height: 78px;
+  padding: 9px;
+  color: #31413a;
+  text-align: left;
+  background: #f7faf8;
+  border: 1px solid #dce8e2;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.study-step-dot span {
+  width: 24px;
+  height: 24px;
+  display: inline-grid;
+  place-items: center;
+  margin-bottom: 7px;
+  color: #fff;
+  background: #899a91;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.study-step-dot b {
+  display: block;
+  font-size: 0.78rem;
+  line-height: 1.22;
+}
+
+.study-step-dot.active {
+  background: #e8f4ee;
+  border-color: #b9d8c9;
+  box-shadow: inset 0 0 0 2px rgba(20, 120, 93, 0.16);
+}
+
+.study-step-dot.active span,
+.study-step-dot.complete span {
+  background: var(--green);
+}
+
+.study-step-instruction {
+  margin: 0 0 14px;
+  color: #3e4d47;
+  line-height: 1.45;
+}
+
+.study-notebook-grid {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 10px 12px;
+  align-items: start;
+}
+
+.study-notebook-grid label {
+  margin: 10px 0 0;
+}
+
+.study-notebook-grid textarea {
+  min-height: 76px;
+}
+
 .research-steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -2068,6 +2146,7 @@ canvas {
   .dashboard-trait-grid,
   .student-steps,
   .research-steps,
+  .study-step-track,
   .wellbeing-hero,
   .lab-hero,
   .lab-grid,
@@ -2104,6 +2183,7 @@ canvas {
   .reason-row,
   .team-cards,
   .response-grid,
+  .study-notebook-grid,
   .compare-row {
     grid-template-columns: 1fr;
   }
