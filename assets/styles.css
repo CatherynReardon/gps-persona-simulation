@@ -2174,6 +2174,261 @@ canvas {
   line-height: 1.38;
 }
 
+.beginner-body {
+  background:
+    linear-gradient(180deg, rgba(237, 242, 239, 0.88), rgba(245, 248, 246, 0.96)),
+    #edf2ef;
+}
+
+.beginner-shell {
+  width: min(1180px, calc(100% - 36px));
+  margin: 0 auto;
+  padding: 28px 0 42px;
+}
+
+.beginner-hero,
+.beginner-overview,
+.beginner-controls,
+.beginner-persona,
+.beginner-steps,
+.canvas-shell {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 249, 0.98)),
+    var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.beginner-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: end;
+  padding: 28px;
+  margin-bottom: 18px;
+}
+
+.beginner-hero h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 4rem);
+  letter-spacing: 0;
+}
+
+.beginner-hero p {
+  max-width: 760px;
+  margin: 12px 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.beginner-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.beginner-nav a,
+.compact-link {
+  min-height: 42px;
+  padding: 10px 14px;
+  color: var(--ink);
+  background: #e6eee9;
+  border: 1px solid #c9d8d0;
+  border-radius: 7px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.beginner-overview {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.72fr) 1fr;
+  gap: 22px;
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+.beginner-overview h2,
+.beginner-controls h2,
+.beginner-steps h2,
+.canvas-shell h2 {
+  margin: 0;
+}
+
+.beginner-overview p {
+  color: var(--muted);
+  line-height: 1.48;
+}
+
+.beginner-overview ol {
+  margin: 0;
+  padding-left: 22px;
+  color: #3e4d47;
+  line-height: 1.7;
+}
+
+.beginner-lab {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.45fr) 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.beginner-controls,
+.beginner-persona,
+.beginner-steps,
+.canvas-shell {
+  padding: 22px;
+}
+
+.beginner-controls {
+  align-self: start;
+}
+
+.beginner-controls label {
+  margin-top: 16px;
+}
+
+.beginner-persona-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.beginner-avatar {
+  width: 112px;
+  height: 112px;
+  flex: 0 0 auto;
+}
+
+.beginner-avatar svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.beginner-persona h2 {
+  margin: 0;
+  font-size: 1.45rem;
+}
+
+.beginner-persona p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.beginner-trait-bars {
+  display: grid;
+  gap: 10px;
+}
+
+.beginner-trait-row {
+  display: grid;
+  grid-template-columns: minmax(210px, 0.48fr) 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 12px;
+  background: #f7faf8;
+  border: 1px solid #dfe9e4;
+  border-radius: 8px;
+}
+
+.beginner-trait-row b,
+.beginner-trait-row span {
+  display: block;
+}
+
+.beginner-trait-row span {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.beginner-bar {
+  height: 12px;
+  background: #e1e9e5;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.beginner-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+  border-radius: inherit;
+}
+
+.beginner-decision {
+  margin-top: 16px;
+  padding: 16px;
+  background: #f3f8f5;
+  border: 1px solid #d9e7e0;
+  border-left: 5px solid var(--green);
+  border-radius: 8px;
+}
+
+.beginner-decision b {
+  display: block;
+  margin-top: 8px;
+}
+
+.beginner-steps {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.beginner-step {
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  gap: 14px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #dfe9e4;
+  border-radius: 8px;
+}
+
+.step-number {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: var(--blue);
+  border-radius: 50%;
+  font-weight: 900;
+}
+
+.beginner-step h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.beginner-step p {
+  margin: 6px 0 10px;
+  color: var(--muted);
+  line-height: 1.42;
+}
+
+.canvas-shell {
+  margin-bottom: 12px;
+}
+
+.submission-draft {
+  min-height: 260px;
+  margin-top: 10px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  line-height: 1.45;
+}
+
+.compact-button {
+  width: auto;
+  min-width: 150px;
+  padding: 0 16px;
+}
+
 .feed-avatars {
   position: relative;
   width: 42px;
@@ -2233,6 +2488,9 @@ canvas {
 
   .workspace-top,
   .student-guide,
+  .beginner-hero,
+  .beginner-overview,
+  .beginner-lab,
   .study-lens-grid,
   .simulation-grid,
   .dashboard-summary,
@@ -2275,6 +2533,8 @@ canvas {
   .chart-key,
   .trait-map-row,
   .trait-bar,
+  .beginner-trait-row,
+  .beginner-step,
   .reason-row,
   .team-cards,
   .response-grid,

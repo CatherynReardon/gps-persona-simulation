@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Beginner Psych Data Explorer</title>
+    <link rel="stylesheet" href="assets/styles.css?v=beginner-page" />
+  </head>
+  <body class="beginner-body">
+    <main class="beginner-shell">
+      <header class="beginner-hero">
+        <div>
+          <p class="eyebrow">Beginner Level</p>
+          <h1>Psych Data Explorer</h1>
+          <p>Use one simulated persona to practice the basic steps of a psychology research study: ask, predict, inspect, test, and reflect.</p>
+        </div>
+        <nav class="beginner-nav" aria-label="Beginner page links">
+          <a href="index.html">Full Simulation</a>
+          <a href="#canvasSubmission">Canvas Submission</a>
+        </nav>
+      </header>
+
+      <section class="beginner-overview" aria-labelledby="overviewTitle">
+        <div>
+          <h2 id="overviewTitle">What students will do</h2>
+          <p>This page is designed for first-time undergraduate researchers. Move through steps 1-5, write short responses, and use the final Canvas draft as your assignment response.</p>
+        </div>
+        <ol>
+          <li>Choose a persona from the GPS dataset.</li>
+          <li>Make a first prediction before looking closely.</li>
+          <li>Use the trait data as evidence.</li>
+          <li>Test your idea in one decision scenario.</li>
+          <li>Explain what the data helped you understand and what it cannot prove.</li>
+        </ol>
+      </section>
+
+      <section class="beginner-lab">
+        <aside class="beginner-controls" aria-label="Beginner explorer controls">
+          <h2>Set Up Your Persona</h2>
+          <label for="beginnerCountry">Country context</label>
+          <select id="beginnerCountry"></select>
+
+          <label for="beginnerScenario">Decision scenario</label>
+          <select id="beginnerScenario">
+            <option value="investment">Risky investment</option>
+            <option value="delay">Delayed reward</option>
+            <option value="trust">Trust game</option>
+            <option value="favor">Favor exchange</option>
+            <option value="donation">Donation appeal</option>
+            <option value="conflict">Conflict response</option>
+          </select>
+
+          <button id="newBeginnerPersona" class="primary-button" type="button">Generate Persona</button>
+          <p class="source-note">This persona is simulated from population-level survey patterns. It is not a real person and should not be treated as representing everyone from a country.</p>
+        </aside>
+
+        <section class="beginner-persona" aria-labelledby="personaCardTitle">
+          <div class="beginner-persona-head">
+            <div id="beginnerAvatar" class="beginner-avatar" aria-hidden="true"></div>
+            <div>
+              <p class="eyebrow">Your Persona</p>
+              <h2 id="personaCardTitle">Loading persona...</h2>
+              <p id="beginnerPersonaMeta"></p>
+            </div>
+          </div>
+          <div id="beginnerTraitBars" class="beginner-trait-bars"></div>
+          <div class="beginner-decision">
+            <span class="card-label">Scenario Result</span>
+            <b id="beginnerDecision">Decision will appear here.</b>
+            <p id="beginnerDecisionWhy"></p>
+          </div>
+        </section>
+      </section>
+
+      <section class="beginner-steps" aria-labelledby="stepsTitle">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Steps 1-5</p>
+            <h2 id="stepsTitle">Complete Your Mini Study</h2>
+          </div>
+          <span class="pill">Canvas-ready</span>
+        </div>
+
+        <article class="beginner-step">
+          <div class="step-number">1</div>
+          <div>
+            <h3>Pick one persona</h3>
+            <p>Record the country context and the decision scenario. This is your study case.</p>
+            <textarea id="stepOne" placeholder="My persona is from... The scenario I chose is..."></textarea>
+          </div>
+        </article>
+
+        <article class="beginner-step">
+          <div class="step-number">2</div>
+          <div>
+            <h3>Make a first prediction</h3>
+            <p>Before using the trait evidence, write what you think the persona might choose and why.</p>
+            <textarea id="stepTwo" placeholder="My first prediction is... I think this because..."></textarea>
+          </div>
+        </article>
+
+        <article class="beginner-step">
+          <div class="step-number">3</div>
+          <div>
+            <h3>Find the strongest trait clue</h3>
+            <p>Choose one GPS trait that gives the best evidence for your interpretation.</p>
+            <textarea id="stepThree" placeholder="The strongest trait clue is... This matters because..."></textarea>
+          </div>
+        </article>
+
+        <article class="beginner-step">
+          <div class="step-number">4</div>
+          <div>
+            <h3>Test the prediction</h3>
+            <p>Compare your prediction to the simulated decision result. Did the evidence support or complicate your first idea?</p>
+            <textarea id="stepFour" placeholder="The simulated result was... This supported/changed my prediction because..."></textarea>
+          </div>
+        </article>
+
+        <article class="beginner-step">
+          <div class="step-number">5</div>
+          <div>
+            <h3>Reflect like a psychology researcher</h3>
+            <p>Explain what the data helped you understand, and name one limit or possible bias.</p>
+            <textarea id="stepFive" placeholder="This activity showed me... A limitation or bias to watch for is..."></textarea>
+          </div>
+        </article>
+      </section>
+
+      <section class="canvas-shell" id="canvasSubmission" aria-labelledby="canvasTitle">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Canvas Assignment Shell</p>
+            <h2 id="canvasTitle">Submission Draft</h2>
+          </div>
+          <button id="buildSubmission" class="small-action" type="button">Build My Canvas Response</button>
+        </div>
+        <p class="microcopy">After you complete steps 1-5, use this draft in your Canvas assignment response. Do not include your name in the text unless your instructor asks you to.</p>
+        <textarea id="submissionDraft" class="submission-draft" placeholder="Click Build My Canvas Response after writing your step responses."></textarea>
+        <div class="mission-actions">
+          <button id="copySubmission" class="secondary-button compact-button" type="button">Copy Response</button>
+          <a class="secondary-link compact-link" href="index.html">Open Full Simulation</a>
+        </div>
+      </section>
+    </main>
+
+    <script src="assets/beginner.js?v=beginner-page"></script>
+  </body>
+</html>

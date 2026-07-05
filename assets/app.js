@@ -1860,10 +1860,12 @@ async function init() {
     els.pauseScene.textContent = "Pause";
     startSceneLoop();
   });
-  els.startExplorer.addEventListener("click", () => {
-    renderExplorerStepper();
-    els.explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
+  if (els.startExplorer && els.explorerSection) {
+    els.startExplorer.addEventListener("click", () => {
+      renderExplorerStepper();
+      els.explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
   els.startClassroom.addEventListener("click", () => {
     createGlobalCohort();
     runGlobalRound();
@@ -1912,20 +1914,22 @@ async function init() {
     state.studyStep = Number(step);
     renderStudyStepper();
   });
-  els.prevExplorerStep.addEventListener("click", () => {
-    state.explorerStep = Math.max(0, state.explorerStep - 1);
-    renderExplorerStepper();
-  });
-  els.nextExplorerStep.addEventListener("click", () => {
-    state.explorerStep = state.explorerStep === explorerSteps.length - 1 ? 0 : state.explorerStep + 1;
-    renderExplorerStepper();
-  });
-  els.explorerStepTrack.addEventListener("click", (event) => {
-    const step = event.target.closest?.("[data-explorer-step]")?.dataset?.explorerStep;
-    if (step === undefined) return;
-    state.explorerStep = Number(step);
-    renderExplorerStepper();
-  });
+  if (els.prevExplorerStep && els.nextExplorerStep && els.explorerStepTrack) {
+    els.prevExplorerStep.addEventListener("click", () => {
+      state.explorerStep = Math.max(0, state.explorerStep - 1);
+      renderExplorerStepper();
+    });
+    els.nextExplorerStep.addEventListener("click", () => {
+      state.explorerStep = state.explorerStep === explorerSteps.length - 1 ? 0 : state.explorerStep + 1;
+      renderExplorerStepper();
+    });
+    els.explorerStepTrack.addEventListener("click", (event) => {
+      const step = event.target.closest?.("[data-explorer-step]")?.dataset?.explorerStep;
+      if (step === undefined) return;
+      state.explorerStep = Number(step);
+      renderExplorerStepper();
+    });
+  }
   els.beginStudy.addEventListener("click", beginResearchStudy);
   els.nextTrial.addEventListener("click", nextResearchTrial);
   els.recordTrial.addEventListener("click", recordResearchTrial);
