@@ -193,7 +193,8 @@ function buildSubmission() {
     `4. Test the prediction: ${responses[3]}`,
     `5. Research reflection: ${responses[4]}`,
     "",
-    "Ethics note: This simulated persona is a learning tool based on survey patterns. It should not be used to stereotype real people or assume all people from a country think the same way.",
+    "Evidence used: GPS trait data and the simulated scenario result.",
+    "Ethics note: This simulated persona is a learning tool based on survey patterns. It cannot prove what a real person would do, and it should not be used to stereotype people from a country.",
   ].join("\n");
 }
 

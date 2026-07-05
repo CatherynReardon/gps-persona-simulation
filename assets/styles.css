@@ -2188,10 +2188,13 @@ canvas {
 
 .beginner-hero,
 .beginner-overview,
+.assignment-brief,
 .beginner-controls,
 .beginner-persona,
 .beginner-steps,
-.canvas-shell {
+.canvas-checklist,
+.canvas-shell,
+.instructor-shell {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 249, 0.98)),
     var(--paper);
@@ -2248,10 +2251,86 @@ canvas {
   margin-bottom: 18px;
 }
 
+.assignment-brief,
+.canvas-checklist,
+.instructor-shell {
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+.assignment-brief {
+  border-left: 5px solid var(--blue);
+}
+
+.assignment-brief h2 {
+  margin: 0;
+}
+
+.assignment-brief > div:first-child p {
+  max-width: 840px;
+  color: var(--muted);
+  line-height: 1.48;
+}
+
+.brief-grid,
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.brief-grid article,
+.checklist-grid label,
+.instructor-copy {
+  padding: 14px;
+  background: #f7faf8;
+  border: 1px solid #dfe9e4;
+  border-radius: 8px;
+}
+
+.brief-grid b {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.brief-grid p,
+.instructor-copy p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.instructor-copy {
+  display: grid;
+  gap: 10px;
+}
+
+.checklist-grid {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.checklist-grid label {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  margin: 0;
+  color: #34433d;
+  line-height: 1.35;
+}
+
+.checklist-grid input {
+  width: auto;
+  margin-top: 2px;
+  accent-color: var(--green);
+}
+
 .beginner-overview h2,
 .beginner-controls h2,
 .beginner-steps h2,
-.canvas-shell h2 {
+.canvas-shell h2,
+.canvas-checklist h2,
+.instructor-shell h2 {
   margin: 0;
 }
 
@@ -2490,6 +2569,8 @@ canvas {
   .student-guide,
   .beginner-hero,
   .beginner-overview,
+  .brief-grid,
+  .checklist-grid,
   .beginner-lab,
   .study-lens-grid,
   .simulation-grid,
