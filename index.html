@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>GPS Student Role-Play Lab</title>
-    <link rel="stylesheet" href="assets/styles.css?v=student-simple" />
+    <link rel="stylesheet" href="assets/styles.css?v=beginner-explorer" />
   </head>
   <body>
     <main class="app-shell">
@@ -90,6 +90,10 @@
         </section>
 
         <section class="panel-section">
+          <button id="startExplorer" class="secondary-button" type="button">Start Beginner Explorer</button>
+        </section>
+
+        <section class="panel-section">
           <button id="startClassroom" class="secondary-button" type="button">Go to Role-Play Activity</button>
         </section>
 
@@ -145,6 +149,44 @@
             <article>
               <b>4. Evaluate the limits</b>
               <p>Ask what the data explains, what it misses, and how bias could shape interpretation.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="explorer-section" id="explorerSection" aria-labelledby="explorerTitle">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Beginner Level</p>
+              <h3 id="explorerTitle">Psych Data Explorer</h3>
+              <p class="microcopy">A five-step path for undergraduates who are new to psychology research and data interpretation.</p>
+            </div>
+            <span id="explorerStepBadge" class="pill">1 of 5</span>
+          </div>
+          <div id="explorerStepTrack" class="explorer-step-track" aria-label="Beginner explorer steps"></div>
+          <div class="explorer-layout">
+            <article class="explorer-card">
+              <span class="card-label">Current Explorer Step</span>
+              <h4 id="explorerStepTitle">Step 1: Pick a persona</h4>
+              <p id="explorerStepInstruction">Choose one simulated persona and treat the traits as data clues, not as a full explanation of a real person.</p>
+              <div class="mission-actions">
+                <button id="prevExplorerStep" class="mini-button" type="button">Previous Step</button>
+                <button id="nextExplorerStep" class="small-action" type="button">Next Explorer Step</button>
+              </div>
+            </article>
+            <article class="explorer-card">
+              <span class="card-label">Explorer Notes</span>
+              <div class="explorer-notebook-grid">
+                <label for="explorerGuess">My first guess</label>
+                <textarea id="explorerGuess" placeholder="Before studying the data, I think this persona might..."></textarea>
+                <label for="explorerClue">Strongest data clue</label>
+                <textarea id="explorerClue" placeholder="The GPS trait that seems most important is..."></textarea>
+                <label for="explorerTest">Scenario test</label>
+                <textarea id="explorerTest" placeholder="In the scenario, I would expect the persona to..."></textarea>
+                <label for="explorerChange">What changed?</label>
+                <textarea id="explorerChange" placeholder="After comparing the evidence, I changed or refined my thinking because..."></textarea>
+                <label for="explorerInsight">Psych insight</label>
+                <textarea id="explorerInsight" placeholder="This shows me that psychological data can help researchers..."></textarea>
+              </div>
             </article>
           </div>
         </section>
@@ -508,6 +550,6 @@
       </section>
     </main>
 
-    <script src="assets/app.js?v=student-simple"></script>
+    <script src="assets/app.js?v=beginner-explorer"></script>
   </body>
 </html>

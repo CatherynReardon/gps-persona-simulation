@@ -23,8 +23,32 @@ const state = {
     startedAt: null,
   },
   studyStep: 0,
+  explorerStep: 0,
   history: [],
 };
+
+const explorerSteps = [
+  {
+    title: "Step 1: Pick a persona",
+    instruction: "Choose one simulated persona. Notice the country, age, gender setting, and avatar, but do not treat those details as the whole explanation.",
+  },
+  {
+    title: "Step 2: Make a quick guess",
+    instruction: "Before reading deeply, write what you think the persona might do in the scenario. This is your starting hypothesis.",
+  },
+  {
+    title: "Step 3: Find trait clues",
+    instruction: "Look at the six GPS traits and identify the strongest clue. Ask which variable seems most connected to the behavior you are studying.",
+  },
+  {
+    title: "Step 4: Test your idea",
+    instruction: "Use the selected scenario to test your guess. Compare the persona's likely choice with the trait evidence and probability estimate.",
+  },
+  {
+    title: "Step 5: Explain what changed",
+    instruction: "Write one psychology insight: what did the data clarify, what did it not prove, and how did your first assumption change?",
+  },
+];
 
 const studySteps = [
   {
@@ -275,6 +299,7 @@ const els = {
   resetTraits: document.querySelector("#resetTraits"),
   generatePersona: document.querySelector("#generatePersona"),
   runGlobalRound: document.querySelector("#runGlobalRound"),
+  startExplorer: document.querySelector("#startExplorer"),
   startClassroom: document.querySelector("#startClassroom"),
   startResearch: document.querySelector("#startResearch"),
   advanceRound: document.querySelector("#advanceRound"),
@@ -317,6 +342,13 @@ const els = {
   teamCards: document.querySelector("#teamCards"),
   roundHistory: document.querySelector("#roundHistory"),
   reflectionPrompts: document.querySelector("#reflectionPrompts"),
+  explorerSection: document.querySelector("#explorerSection"),
+  explorerStepTitle: document.querySelector("#explorerStepTitle"),
+  explorerStepBadge: document.querySelector("#explorerStepBadge"),
+  explorerStepTrack: document.querySelector("#explorerStepTrack"),
+  explorerStepInstruction: document.querySelector("#explorerStepInstruction"),
+  prevExplorerStep: document.querySelector("#prevExplorerStep"),
+  nextExplorerStep: document.querySelector("#nextExplorerStep"),
   researchSection: document.querySelector("#researchSection"),
   newParticipant: document.querySelector("#newParticipant"),
   exportResearch: document.querySelector("#exportResearch"),
@@ -1497,6 +1529,26 @@ function randomCondition() {
   return researchConditions[Math.floor(Math.random() * researchConditions.length)];
 }
 
+function renderExplorerStepper() {
+  if (!els.explorerStepTitle || !els.explorerStepTrack) return;
+  const step = explorerSteps[state.explorerStep] ?? explorerSteps[0];
+  els.explorerStepTitle.textContent = step.title;
+  els.explorerStepBadge.textContent = `${state.explorerStep + 1} of ${explorerSteps.length}`;
+  els.explorerStepInstruction.textContent = step.instruction;
+  els.explorerStepTrack.innerHTML = explorerSteps
+    .map(
+      (item, index) => `
+        <button class="explorer-step-dot ${index === state.explorerStep ? "active" : ""} ${index < state.explorerStep ? "complete" : ""}" data-explorer-step="${index}" type="button">
+          <span>${index + 1}</span>
+          <b>${item.title.replace(/^Step \d+: /, "")}</b>
+        </button>
+      `,
+    )
+    .join("");
+  els.prevExplorerStep.disabled = state.explorerStep === 0;
+  els.nextExplorerStep.textContent = state.explorerStep === explorerSteps.length - 1 ? "Restart Explorer" : "Next Explorer Step";
+}
+
 function renderStudyStepper() {
   if (!els.studyStepTitle || !els.studyStepTrack) return;
   const step = studySteps[state.studyStep] ?? studySteps[0];
@@ -1751,6 +1803,7 @@ function renderPersona() {
   if (!state.scenePeople.length) resetScenePeople(false);
   startSceneLoop();
   renderClassroomMode();
+  renderExplorerStepper();
   renderResearchMode();
 }
 
@@ -1807,6 +1860,10 @@ async function init() {
     els.pauseScene.textContent = "Pause";
     startSceneLoop();
   });
+  els.startExplorer.addEventListener("click", () => {
+    renderExplorerStepper();
+    els.explorerSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
   els.startClassroom.addEventListener("click", () => {
     createGlobalCohort();
     runGlobalRound();
@@ -1854,6 +1911,20 @@ async function init() {
     if (step === undefined) return;
     state.studyStep = Number(step);
     renderStudyStepper();
+  });
+  els.prevExplorerStep.addEventListener("click", () => {
+    state.explorerStep = Math.max(0, state.explorerStep - 1);
+    renderExplorerStepper();
+  });
+  els.nextExplorerStep.addEventListener("click", () => {
+    state.explorerStep = state.explorerStep === explorerSteps.length - 1 ? 0 : state.explorerStep + 1;
+    renderExplorerStepper();
+  });
+  els.explorerStepTrack.addEventListener("click", (event) => {
+    const step = event.target.closest?.("[data-explorer-step]")?.dataset?.explorerStep;
+    if (step === undefined) return;
+    state.explorerStep = Number(step);
+    renderExplorerStepper();
   });
   els.beginStudy.addEventListener("click", beginResearchStudy);
   els.nextTrial.addEventListener("click", nextResearchTrial);

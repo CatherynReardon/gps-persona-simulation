@@ -264,6 +264,7 @@ input[type="range"] {
 
 .metric-strip div,
 .student-guide,
+.explorer-section,
 .study-lens,
 .persona-card,
 .radar-panel,
@@ -306,6 +307,7 @@ input[type="range"] {
 
 .persona-card,
 .student-guide,
+.explorer-section,
 .study-lens,
 .radar-panel,
 .trait-panel,
@@ -355,6 +357,97 @@ input[type="range"] {
   color: var(--muted);
   font-size: 0.84rem;
   line-height: 1.38;
+}
+
+.explorer-section {
+  margin-bottom: 18px;
+}
+
+.explorer-step-track {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.explorer-step-dot {
+  min-height: 74px;
+  padding: 9px;
+  color: #31413a;
+  text-align: left;
+  background: #f7faf8;
+  border: 1px solid #dce8e2;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.explorer-step-dot span {
+  width: 24px;
+  height: 24px;
+  display: inline-grid;
+  place-items: center;
+  margin-bottom: 7px;
+  color: #fff;
+  background: #899a91;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.explorer-step-dot b {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1.22;
+}
+
+.explorer-step-dot.active {
+  background: #edf6fb;
+  border-color: #b9d4e7;
+  box-shadow: inset 0 0 0 2px rgba(49, 95, 157, 0.16);
+}
+
+.explorer-step-dot.active span,
+.explorer-step-dot.complete span {
+  background: var(--blue);
+}
+
+.explorer-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.72fr) 1fr;
+  gap: 14px;
+}
+
+.explorer-card {
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #dce8e2;
+  border-radius: 8px;
+  box-shadow: var(--soft-shadow);
+}
+
+.explorer-card h4 {
+  margin: 8px 0;
+  font-size: 1.05rem;
+}
+
+.explorer-card p {
+  color: #3e4d47;
+  line-height: 1.45;
+}
+
+.explorer-notebook-grid {
+  display: grid;
+  grid-template-columns: 145px 1fr;
+  gap: 10px 12px;
+  align-items: start;
+}
+
+.explorer-notebook-grid label {
+  margin: 10px 0 0;
+}
+
+.explorer-notebook-grid textarea {
+  min-height: 72px;
 }
 
 .study-lens {
@@ -2145,6 +2238,8 @@ canvas {
   .dashboard-summary,
   .dashboard-trait-grid,
   .student-steps,
+  .explorer-layout,
+  .explorer-step-track,
   .research-steps,
   .study-step-track,
   .wellbeing-hero,
@@ -2183,6 +2278,7 @@ canvas {
   .reason-row,
   .team-cards,
   .response-grid,
+  .explorer-notebook-grid,
   .study-notebook-grid,
   .compare-row {
     grid-template-columns: 1fr;
